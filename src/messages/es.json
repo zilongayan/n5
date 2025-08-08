@@ -1,0 +1,42 @@
+{
+  "nav": {
+    "random": "Aleatorio",
+    "series": "Series",
+    "tags": "Etiquetas",
+    "characters": "Personajes",
+    "artists": "Artistas",
+    "groups": "Grupos",
+    "about": "Acerca de",
+    "popular": "Popular",
+    "recent": "Reciente",
+    "search": "Buscar"
+  },
+  "age": {
+    "title": "Solo adultos",
+    "desc": "Este sitio contiene contenido para adultos. Debes tener 18+ para continuar.",
+    "enter": "Tengo 18+",
+    "leave": "Salir"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "signup": "Registrarse",
+    "email": "Email",
+    "password": "Contraseña",
+    "favorites": "Favoritos"
+  },
+  "home": {
+    "title": "Descubre galerías hentai",
+    "popular": "Tendencias",
+    "recent": "Añadidos recientemente"
+  },
+  "catalog": {
+    "empty": "No se encontraron elementos",
+    "next": "Siguiente",
+    "prev": "Anterior",
+    "page": "Página {page}",
+    "items": "{count} elementos"
+  }
+}
+
+

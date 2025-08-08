@@ -1,0 +1,159 @@
+/* Classes utilitaires pour le thème */
+
+/* Backgrounds */
+.bg-primary { background-color: var(--primary); }
+.bg-primary-light { background-color: var(--primary-light); }
+.bg-primary-dark { background-color: var(--primary-dark); }
+.bg-surface { background-color: var(--surface); }
+.bg-surface-elevated { background-color: var(--surface-elevated); }
+.bg-card { background-color: var(--card); }
+
+/* Text colors */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-disabled { color: var(--text-disabled); }
+
+/* Borders */
+.border-default { border-color: var(--border); }
+.border-light { border-color: var(--border-light); }
+.border-strong { border-color: var(--border-strong); }
+
+/* Status colors */
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-error { color: var(--error); }
+.text-info { color: var(--info); }
+
+.bg-success { background-color: var(--success); }
+.bg-warning { background-color: var(--warning); }
+.bg-error { background-color: var(--error); }
+.bg-info { background-color: var(--info); }
+
+/* Shadows */
+.shadow-theme-light { box-shadow: 0 1px 3px var(--shadow-light); }
+.shadow-theme-medium { box-shadow: 0 4px 12px var(--shadow-medium); }
+.shadow-theme-strong { box-shadow: 0 8px 25px var(--shadow-strong); }
+
+/* Hover states */
+.hover-card:hover { background-color: var(--card-hover); }
+.hover-primary:hover { background-color: var(--primary-hover); }
+
+/* Focus states */
+.focus-ring:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Component-specific mixins */
+.theme-button-primary {
+  background-color: var(--primary);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.theme-button-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--shadow-medium);
+}
+
+.theme-button-secondary {
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+}
+
+.theme-button-secondary:hover {
+  background-color: var(--surface-elevated);
+  border-color: var(--border-strong);
+}
+
+.theme-card {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: all 0.3s ease;
+}
+
+.theme-card:hover {
+  background-color: var(--card-hover);
+  box-shadow: 0 8px 25px var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+.theme-input {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.theme-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  outline: none;
+}
+
+.theme-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Gradients adaptés au thème */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+.bg-gradient-surface {
+  background: linear-gradient(135deg, var(--surface), var(--surface-elevated));
+}
+
+/* Tags styling amélioré */
+.tag-primary {
+  background-color: #dbeafe; /* blue-100 */
+  color: #1e40af; /* blue-800 */
+  border: 1px solid #bfdbfe; /* blue-200 */
+}
+
+.dark .tag-primary {
+  background-color: rgba(37, 99, 235, 0.15); /* blue-600 with opacity */
+  color: #93c5fd; /* blue-300 */
+  border: 1px solid rgba(37, 99, 235, 0.3);
+}
+
+.tag-primary:hover {
+  background-color: #bfdbfe; /* blue-200 */
+  color: #1e3a8a; /* blue-900 */
+  transform: translateY(-1px);
+}
+
+.dark .tag-primary:hover {
+  background-color: rgba(37, 99, 235, 0.25);
+  color: #dbeafe; /* blue-100 */
+}
+
+.tag-secondary {
+  background-color: #f1f5f9; /* slate-100 */
+  color: #475569; /* slate-600 */
+  border: 1px solid #e2e8f0; /* slate-200 */
+}
+
+.dark .tag-secondary {
+  background-color: rgba(71, 85, 105, 0.15); /* slate-600 with opacity */
+  color: #cbd5e1; /* slate-300 */
+  border: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.tag-accent {
+  background-color: #ede9fe; /* violet-100 */
+  color: #6b21a8; /* violet-800 */
+  border: 1px solid #ddd6fe; /* violet-200 */
+}
+
+.dark .tag-accent {
+  background-color: rgba(139, 92, 246, 0.15); /* violet-500 with opacity */
+  color: #c4b5fd; /* violet-300 */
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
