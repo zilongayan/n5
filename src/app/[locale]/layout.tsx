@@ -16,15 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: '3Like - Adult Content Portal',
+  title: 'N5 Portal - Adult Content Portal',
   description: 'Discover the largest collection of adult content with over 550,000 galleries and counting',
   manifest: '/manifest.json',
-  themeColor: '#8b5cf6',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: '3Like'
+    title: 'N5 Portal'
   },
   icons: {
     icon: [
@@ -35,6 +33,16 @@ export const metadata: Metadata = {
     ]
   }
 };
+
+export function generateViewport() {
+  return {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: '#8b5cf6'
+  };
+}
 
 export default async function LocaleLayout({
   children,
@@ -48,11 +56,7 @@ export default async function LocaleLayout({
 
   const activeLocale = locale;
 
-  return (
-    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      {children}
-    </body>
-  );
+  return children;
 }
 
 
