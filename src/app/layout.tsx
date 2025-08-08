@@ -92,12 +92,13 @@ export const metadata = {
 
 import {headers} from 'next/headers';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const path = headers().get('next-url') || '/';
+  const headersList = await headers();
+  const path = headersList.get('next-url') || '/';
   const first = path.split('/')[1];
   const htmlLang = locales.includes(first as any) ? first : defaultLocale;
   return (
