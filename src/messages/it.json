@@ -36,6 +36,41 @@
     "prev": "Precedente",
     "page": "Pagina {page}",
     "items": "{count} elementi"
+  },
+  "gallery": {
+    "readNow": "Leggi ora",
+    "download": "Scarica",
+    "share": "Condividi",
+    "addToFavorites": "Aggiungi ai preferiti",
+    "removeFromFavorites": "Rimuovi dai preferiti",
+    "tags": "Tag",
+    "stats": {
+      "pages": "Pagine",
+      "rating": "Valutazione",
+      "views": "Visualizzazioni",
+      "favorites": "Preferiti"
+    },
+    "preview": "Anteprima galleria",
+    "related": "Gallerie correlate",
+    "viewAll": "Visualizza tutto",
+    "description": "Una galleria accattivante con illustrazioni straordinarie e narrazione coinvolgente. Questa collezione presenta i migliori contenuti con opere d'arte di alta qualità e storie coinvolgenti che ti intratterranno per ore.",
+    "copyLink": "Copia link",
+    "linkCopied": "Link copiato!",
+    "downloading": "Scaricando...",
+    "downloadComplete": "Download completato!",
+    "shareVia": "Condividi tramite",
+    "comments": "Commenti"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "cancel": "Annulla",
+    "close": "Chiudi",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "confirm": "Conferma"
   }
 }
 

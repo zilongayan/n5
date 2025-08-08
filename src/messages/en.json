@@ -36,6 +36,41 @@
     "prev": "Previous",
     "page": "Page {page}",
     "items": "{count} items"
+  },
+  "gallery": {
+    "readNow": "Read now",
+    "download": "Download",
+    "share": "Share",
+    "addToFavorites": "Add to favorites",
+    "removeFromFavorites": "Remove from favorites",
+    "tags": "Tags",
+    "stats": {
+      "pages": "Pages",
+      "rating": "Rating",
+      "views": "Views",
+      "favorites": "Favorites"
+    },
+    "preview": "Gallery Preview",
+    "related": "Related Galleries",
+    "viewAll": "View all",
+    "description": "A captivating gallery featuring stunning illustrations and engaging storytelling. This collection presents the best content with high-quality artwork and engaging stories that will entertain you for hours.",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied!",
+    "downloading": "Downloading...",
+    "downloadComplete": "Download complete!",
+    "shareVia": "Share via",
+    "comments": "Comments"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm"
   }
 }
 

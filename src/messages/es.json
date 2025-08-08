@@ -36,6 +36,41 @@
     "prev": "Anterior",
     "page": "Página {page}",
     "items": "{count} elementos"
+  },
+  "gallery": {
+    "readNow": "Leer ahora",
+    "download": "Descargar",
+    "share": "Compartir",
+    "addToFavorites": "Añadir a favoritos",
+    "removeFromFavorites": "Quitar de favoritos",
+    "tags": "Etiquetas",
+    "stats": {
+      "pages": "Páginas",
+      "rating": "Calificación",
+      "views": "Vistas",
+      "favorites": "Favoritos"
+    },
+    "preview": "Vista previa de la galería",
+    "related": "Galerías relacionadas",
+    "viewAll": "Ver todo",
+    "description": "Una galería cautivadora con ilustraciones impresionantes y narrativa atractiva. Esta colección presenta el mejor contenido con arte de alta calidad e historias atractivas que te entretendrán durante horas.",
+    "copyLink": "Copiar enlace",
+    "linkCopied": "¡Enlace copiado!",
+    "downloading": "Descargando...",
+    "downloadComplete": "¡Descarga completa!",
+    "shareVia": "Compartir por",
+    "comments": "Comentarios"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "confirm": "Confirmar"
   }
 }
 
