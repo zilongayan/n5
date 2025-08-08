@@ -5,6 +5,8 @@ import {useState, useEffect} from 'react';
 import {ThemeToggle} from './ThemeToggle';
 import {SearchModal} from './SearchModal';
 import {LanguageSelector} from './LanguageSelector';
+import {ProfileDropdown} from './ProfileDropdown';
+import {MobileProfileMenu} from './MobileProfileMenu';
 import {useTranslations} from '@/hooks/useTranslations';
 import {useAuth} from '@/hooks/useAuth';
 
@@ -12,7 +14,7 @@ export function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const {t, locale} = useTranslations();
-  const {user, loading, logout, isAuthenticated} = useAuth();
+  const {loading, isAuthenticated} = useAuth();
 
   // Close mobile menu when clicking outside
   useEffect(() => {
@@ -97,17 +99,7 @@ export function NavBar() {
             <div className="hidden md:flex items-center space-x-2">
               {!loading && (
                 isAuthenticated ? (
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
-                      {user?.email}
-                    </span>
-                    <button 
-                      onClick={logout}
-                      className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
-                    >
-                      {t('nav.logout')}
-                    </button>
-                  </div>
+                  <ProfileDropdown />
                 ) : (
                   <>
                     <Link 
@@ -173,25 +165,12 @@ export function NavBar() {
             </button>
             
             {/* Mobile Auth Buttons */}
-            <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
               {!loading && (
                 isAuthenticated ? (
-                  <div className="space-y-2">
-                    <div className="px-4 py-3 text-center text-slate-600 dark:text-slate-400">
-                      {user?.email}
-                    </div>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsMenuOpen(false);
-                      }}
-                      className="block w-full px-4 py-3 mx-4 bg-red-600 hover:bg-red-700 text-white text-center rounded-lg transition-colors"
-                    >
-                      {t('nav.logout')}
-                    </button>
-                  </div>
+                  <MobileProfileMenu onClose={() => setIsMenuOpen(false)} />
                 ) : (
-                  <>
+                  <div className="space-y-2">
                     <Link
                       href={`/${locale}/login`}
                       className="block px-4 py-3 text-center text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -206,7 +185,7 @@ export function NavBar() {
                     >
                       {t('nav.signup')}
                     </Link>
-                  </>
+                  </div>
                 )
               )}
             </div>
