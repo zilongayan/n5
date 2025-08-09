@@ -1,11 +1,21 @@
 import createMiddleware from 'next-intl/middleware';
 import {locales, defaultLocale} from './i18n/request';
+import {NextRequest} from 'next/server';
 
-export default createMiddleware({
+const intlMiddleware = createMiddleware({
   locales: Array.from(locales),
   defaultLocale,
-  localePrefix: 'as-needed'
+  localePrefix: 'always'
 });
+
+export default function middleware(request: NextRequest) {
+  // Skip middleware for root path, let rewrite handle it
+  if (request.nextUrl.pathname === '/') {
+    return;
+  }
+  
+  return intlMiddleware(request);
+}
 
 export const config = {
   matcher: [
@@ -14,7 +24,8 @@ export const config = {
     // - _next (static files)
     // - _vercel (Vercel internals)
     // - static files
-    '/((?!api|_next|_vercel|.*\\..*).*)'
+    // - root path (handled by rewrite)
+    '/((?!api|_next|_vercel|.*\\..*|^$).*)'
   ]
 };
 
