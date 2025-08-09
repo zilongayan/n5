@@ -45,11 +45,15 @@ export function NavBar() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Use root path for English home, localized path for others
+  const homeHref = locale === 'en' ? '/' : `/${locale}`;
+  const localePrefix = locale === 'en' ? '' : `/${locale}`;
+  
   const navItems = [
-    {href: `/${locale}`, label: t('nav.home'), icon: '🏠'},
-    {href: `/${locale}/popular`, label: t('nav.popular'), icon: '🔥'},
-    {href: `/${locale}/recent`, label: t('nav.recent'), icon: '🆕'},
-    {href: `/${locale}/random`, label: t('nav.random'), icon: '🎲'},
+    {href: homeHref, label: t('nav.home'), icon: '🏠'},
+    {href: `${localePrefix}/popular`, label: t('nav.popular'), icon: '🔥'},
+    {href: `${localePrefix}/recent`, label: t('nav.recent'), icon: '🆕'},
+    {href: `${localePrefix}/random`, label: t('nav.random'), icon: '🎲'},
   ];
 
   return (
@@ -57,7 +61,7 @@ export function NavBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={`/${locale}`} className="flex items-center space-x-2">
+          <Link href={homeHref} className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">N5</span>
             </div>

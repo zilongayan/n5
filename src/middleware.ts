@@ -1,21 +1,11 @@
 import createMiddleware from 'next-intl/middleware';
 import {locales, defaultLocale} from './i18n/request';
-import {NextRequest} from 'next/server';
 
-const intlMiddleware = createMiddleware({
+export default createMiddleware({
   locales: Array.from(locales),
   defaultLocale,
-  localePrefix: 'always'
+  localePrefix: 'as-needed'
 });
-
-export default function middleware(request: NextRequest) {
-  // Skip middleware for root path, let rewrite handle it
-  if (request.nextUrl.pathname === '/') {
-    return;
-  }
-  
-  return intlMiddleware(request);
-}
 
 export const config = {
   matcher: [
