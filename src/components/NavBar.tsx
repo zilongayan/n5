@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {useState, useEffect} from 'react';
 import {ThemeToggle} from './ThemeToggle';
 import {SearchModal} from './SearchModal';
-import {LanguageSelector} from './LanguageSelector';
+import {LanguageSwitcher} from './LanguageSwitcher';
 import {ProfileDropdown} from './ProfileDropdown';
 import {MobileProfileMenu} from './MobileProfileMenu';
 import {useTranslations} from '@/hooks/useTranslations';
@@ -96,7 +96,7 @@ export function NavBar() {
               <span className="hidden lg:inline xl:hidden">⌘K</span>
             </button>
 
-            <LanguageSelector />
+            <LanguageSwitcher />
             <ThemeToggle />
             
             {/* Profile/Login */}

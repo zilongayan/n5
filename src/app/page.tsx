@@ -1,6 +1,7 @@
 import {NavBar} from '@/components/NavBar';
 import {AgeGate} from '@/components/AgeGate';
 import {ScrollToTop} from '@/components/ScrollToTop';
+import {LanguageDetector} from '@/components/LanguageDetector';
 import {getCatalogPage} from '@/data/catalog';
 import {translations} from '@/i18n/translations';
 import Link from 'next/link';
@@ -27,6 +28,7 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-900 dark:via-blue-900/20 dark:to-purple-900/20">
+      <LanguageDetector />
       <AgeGate />
       <NavBar />
       <ScrollToTop />

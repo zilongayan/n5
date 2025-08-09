@@ -4,7 +4,9 @@ import {locales, defaultLocale} from './i18n/request';
 export default createMiddleware({
   locales: Array.from(locales),
   defaultLocale,
-  localePrefix: 'as-needed'
+  localePrefix: 'as-needed',
+  // Détection automatique de la langue basée sur Accept-Language du navigateur
+  localeDetection: true
 });
 
 export const config = {
