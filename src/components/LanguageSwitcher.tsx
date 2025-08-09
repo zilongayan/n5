@@ -25,15 +25,22 @@ export function LanguageSwitcher() {
     // Stocker la préférence de l'utilisateur
     localStorage.setItem('preferred-locale', localeCode);
     
-    if (localeCode === 'en') {
-      // Pour l'anglais, aller à la racine
-      router.push('/');
+    // Construire le nouveau chemin en fonction de la langue
+    const pathSegments = pathname.split('/').filter(Boolean);
+    const currentLocaleInPath = pathSegments[0];
+    
+    // Retirer la locale actuelle du chemin si elle existe
+    let pathWithoutLocale = '';
+    if (['en', 'fr', 'es', 'it', 'pt', 'ru'].includes(currentLocaleInPath)) {
+      pathWithoutLocale = pathSegments.slice(1).join('/');
     } else {
-      // Pour les autres langues, utiliser le préfixe
-      const pathWithoutLocale = pathname.split('/').slice(2).join('/');
-      const newPath = `/${localeCode}${pathWithoutLocale ? `/${pathWithoutLocale}` : ''}`;
-      router.push(newPath);
+      pathWithoutLocale = pathSegments.join('/');
     }
+    
+    // Toujours utiliser le préfixe de langue, même pour l'anglais
+    // Le middleware se chargera de rediriger /en vers / si nécessaire
+    const newPath = `/${localeCode}${pathWithoutLocale ? `/${pathWithoutLocale}` : ''}`;
+    router.push(newPath);
     
     setIsOpen(false);
   };
