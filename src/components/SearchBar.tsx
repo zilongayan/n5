@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { MagnifyingGlassIcon, XMarkIcon, ClockIcon, StarIcon, EyeIcon, FireIcon, BookOpenIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon as MagnifyingGlassIconSolid } from '@heroicons/react/24/solid';
@@ -14,7 +14,6 @@ interface SearchResult {
   rating?: number;
   views?: number;
   chapters?: number;
-  lastUpdated?: string;
 }
 
 interface SearchBarProps {
@@ -25,9 +24,7 @@ interface SearchBarProps {
 export default function SearchBar({ placeholder = "Rechercher un manga...", className = "" }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   
@@ -35,66 +32,45 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // Simulated search results - in real app, this would come from API
+  // Données de test simplifiées
   const mockSearchResults: SearchResult[] = [
     {
       id: '1',
       title: 'Solo Leveling',
       cover: 'https://uploads.mangadex.org/covers/32d76d19-8a05-4db0-9fc2-e0b0648fe9d0/e90bdc47-c8b9-4df7-b2c0-17641b645ee1.jpg.512.jpg',
-      description: 'Lorsque d\'étranges portails sont apparus aux quatre coins du monde, l\'humanité a dû trouver parade pour ne pas finir massacrée entre les griffes des monstres qu\'ils ont apportés avec eux.',
-      tags: ['Action', 'Fantasy', 'Monsters', 'Adventure'],
+      description: 'Lorsque d\'étranges portails sont apparus aux quatre coins du monde...',
+      tags: ['Action', 'Fantasy', 'Monsters'],
       rating: 4.8,
       views: 1250000,
       chapters: 156
     },
     {
       id: '2',
-      title: 'Mairimashita! Iruma-kun',
-      cover: 'https://uploads.mangadex.org/covers/5c1f9c8e-8b1a-4b8c-9c1f-9c8e8b1a4b8c/e90bdc47-c8b9-4df7-b2c0-17641b645ee1.jpg.512.jpg',
-      description: 'Hopeless pushover Iruma Suzuki has found himself in a devil of a predicament. His trashy parents have sold him to the devil!',
-      tags: ['Comedy', 'Fantasy', 'School', 'Demons'],
-      rating: 4.6,
-      views: 890000,
-      chapters: 89
-    },
-    {
-      id: '3',
       title: 'Chainsaw Man',
       cover: 'https://uploads.mangadex.org/covers/7d1f9c8e-8b1a-4b8c-9c1f-9c8e8b1a4b8c/e90bdc47-c8b9-4df7-b2c0-17641b645ee1.jpg.512.jpg',
-      description: 'Denji is a teenage boy living with a Chainsaw Devil named Pochita. Due to the debt his father left behind, he has been living a rock-bottom life while repaying his debt.',
-      tags: ['Action', 'Horror', 'Supernatural', 'Demons'],
+      description: 'Denji est un jeune garçon vivant avec un démon tronçonneuse...',
+      tags: ['Action', 'Horror', 'Supernatural'],
       rating: 4.9,
       views: 2100000,
       chapters: 97
     },
     {
-      id: '4',
+      id: '3',
       title: 'One Piece',
       cover: 'https://uploads.mangadex.org/covers/9e1f9c8e-8b1a-4b8c-9c1f-9c8e8b1a4b8c/e90bdc47-c8b9-4df7-b2c0-17641b645ee1.jpg.512.jpg',
-      description: 'Follow the adventures of Monkey D. Luffy and his pirate crew in search of the legendary treasure known as "One Piece" to become the next Pirate King.',
-      tags: ['Action', 'Adventure', 'Comedy', 'Pirates'],
+      description: 'Suivez les aventures de Monkey D. Luffy et son équipage de pirates...',
+      tags: ['Action', 'Adventure', 'Comedy'],
       rating: 4.7,
       views: 3500000,
       chapters: 1089
-    },
-    {
-      id: '5',
-      title: 'Demon Slayer',
-      cover: 'https://uploads.mangadex.org/covers/0f1f9c8e-8b1a-4b8c-9c1f-9c8e8b1a4b8c/e90bdc47-c8b9-4df7-b2c0-17641b645ee1.jpg.512.jpg',
-      description: 'Tanjirou Kamado\'s life changes when his family is attacked by demons and only his sister Nezuko survives, but she has been transformed into a demon.',
-      tags: ['Action', 'Fantasy', 'Historical', 'Demons'],
-      rating: 4.8,
-      views: 1800000,
-      chapters: 205
     }
   ];
 
-  // Handle click outside to close dropdown
+  // Gestion du clic à l'extérieur
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
-        setSelectedIndex(-1);
         setIsFocused(false);
       }
     };
@@ -103,127 +79,83 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!showDropdown) return;
-
-      switch (event.key) {
-        case 'ArrowDown':
-          event.preventDefault();
-          setSelectedIndex(prev => 
-            prev < results.length - 1 ? prev + 1 : prev
-          );
-          break;
-        case 'ArrowUp':
-          event.preventDefault();
-          setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
-          break;
-        case 'Enter':
-          event.preventDefault();
-          if (selectedIndex >= 0 && results[selectedIndex]) {
-            handleResultClick(results[selectedIndex]);
-          } else if (query.trim()) {
-            // Create a synthetic form event for the search
-            const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
-            handleSearch(syntheticEvent);
-          }
-          break;
-        case 'Escape':
-          setShowDropdown(false);
-          setSelectedIndex(-1);
-          setIsFocused(false);
-          inputRef.current?.blur();
-          break;
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [showDropdown, results, selectedIndex, query]);
-
-  // Simulate search with debouncing
-  useEffect(() => {
-    if (!query.trim()) {
+  // Recherche simplifiée
+  const performSearch = (searchQuery: string) => {
+    if (!searchQuery.trim()) {
       setResults([]);
       setShowDropdown(false);
-      setSelectedIndex(-1);
-      setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
-    const timeoutId = setTimeout(() => {
-      // Simulate API call delay
-      setTimeout(() => {
-        const filteredResults = mockSearchResults.filter(manga =>
-          manga.title.toLowerCase().includes(query.toLowerCase()) ||
-          manga.tags?.some(tag => tag.toLowerCase().includes(query.toLowerCase())) ||
-          manga.description?.toLowerCase().includes(query.toLowerCase())
-        );
-        
-        setResults(filteredResults);
-        setShowDropdown(true); // Always show dropdown if there are results
-        setSelectedIndex(-1);
-        setIsLoading(false);
-      }, 300);
-    }, 200);
+    
+    // Simulation d'un délai d'API
+    setTimeout(() => {
+      const filteredResults = mockSearchResults.filter(manga =>
+        manga.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        manga.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        manga.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      
+      console.log('Search query:', searchQuery);
+      console.log('Filtered results:', filteredResults);
+      
+      setResults(filteredResults);
+      setShowDropdown(true);
+      setIsLoading(false);
+    }, 300);
+  };
 
-    return () => clearTimeout(timeoutId);
-  }, [query]);
-
+  // Gestion de la saisie
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-    setIsSearching(true);
+    console.log('Input changed to:', value);
     
-    // Show dropdown immediately when typing
-    if (value.trim()) {
-      setShowDropdown(true);
-    } else {
-      setShowDropdown(false);
-      setResults([]);
-    }
+    // Recherche immédiate
+    performSearch(value);
   };
 
+  // Gestion du focus
   const handleInputFocus = () => {
     setIsFocused(true);
-    // Show dropdown if there's a query and results
-    if (query.trim() && results.length > 0) {
+    if (query.trim()) {
       setShowDropdown(true);
     }
   };
 
+  // Clic sur un résultat
   const handleResultClick = (result: SearchResult) => {
+    console.log('Result clicked:', result);
     setShowDropdown(false);
     setQuery('');
-    setSelectedIndex(-1);
     setIsFocused(false);
     router.push(`/gallery/${result.id}`);
   };
 
+  // Soumission du formulaire
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim()) {
+      console.log('Form submitted with query:', query);
       setShowDropdown(false);
-      setSelectedIndex(-1);
       setIsFocused(false);
       router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
 
+  // Effacer la recherche
   const clearSearch = () => {
     setQuery('');
     setResults([]);
     setShowDropdown(false);
-    setSelectedIndex(-1);
     setIsFocused(false);
     inputRef.current?.focus();
   };
 
   return (
     <div ref={searchRef} className={`relative ${className}`}>
-      {/* Enhanced Search Input */}
+      {/* Barre de recherche */}
       <form onSubmit={handleSearch} className="relative group">
         <div className={`relative transition-all duration-500 ${
           isFocused ? 'scale-105' : 'scale-100'
@@ -242,12 +174,7 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
             }`}
           />
           
-          {/* Background Glow Effect */}
-          <div className={`absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/5 to-blue-500/10 rounded-3xl blur-xl transition-opacity duration-500 ${
-            isFocused ? 'opacity-100' : 'opacity-0'
-          }`} />
-          
-          {/* Search Icon with Animation */}
+          {/* Icône de recherche */}
           <div className="absolute left-5 top-1/2 -translate-y-1/2">
             {isLoading ? (
               <div className="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
@@ -260,7 +187,7 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
             )}
           </div>
 
-          {/* Clear Button with Enhanced Animation */}
+          {/* Bouton d'effacement */}
           {query && (
             <button
               type="button"
@@ -272,7 +199,7 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
             </button>
           )}
 
-          {/* Enhanced Search Button */}
+          {/* Bouton de recherche */}
           <button 
             type="submit"
             className={`absolute right-2 top-1/2 -translate-y-1/2 px-6 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 text-white font-semibold rounded-2xl transition-all duration-300 transform hover:scale-110 hover:shadow-xl hover:shadow-purple-500/30 ${
@@ -285,13 +212,13 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
         </div>
       </form>
 
-      {/* Enhanced Search Results Dropdown */}
+      {/* Dropdown des résultats */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-4 animate-in slide-in-from-top-2 duration-300">
-          <div className="bg-gradient-to-br from-slate-800/95 via-slate-700/95 to-slate-800/95 backdrop-blur-2xl border-2 border-purple-500/30 rounded-3xl shadow-2xl shadow-purple-500/20 z-50 max-h-[500px] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-4 z-50">
+          <div className="bg-slate-800/95 backdrop-blur-xl border-2 border-purple-500/30 rounded-2xl shadow-2xl shadow-purple-500/20 max-h-96 overflow-y-auto">
             
-            {/* Dropdown Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-xl border-b border-purple-500/30 rounded-t-3xl p-4">
+            {/* Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-xl border-b border-purple-500/30 rounded-t-2xl p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <FireIcon className="w-5 h-5 text-orange-400" />
@@ -300,135 +227,95 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
                     {results.length} manga{results.length > 1 ? 's' : ''}
                   </span>
                 </div>
-                <div className="text-gray-400 text-sm">
-                  Utilisez ↑↓ pour naviguer, Enter pour sélectionner
-                </div>
               </div>
             </div>
 
-            {isLoading ? (
-              <div className="p-12 text-center">
-                <div className="w-12 h-12 border-3 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-300 text-lg font-medium">Recherche en cours...</p>
-                <p className="text-gray-500 text-sm">Analyse de notre base de données</p>
-              </div>
-            ) : results.length === 0 ? (
-              <div className="p-12 text-center">
-                <div className="w-20 h-20 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MagnifyingGlassIcon className="w-10 h-10 text-gray-500" />
+            {/* Contenu des résultats */}
+            <div className="p-4 space-y-3">
+              {isLoading ? (
+                <div className="p-8 text-center">
+                  <div className="w-8 h-8 border-2 border-purple-400 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+                  <p className="text-gray-400">Recherche en cours...</p>
                 </div>
-                <p className="text-gray-300 text-xl font-semibold mb-2">Aucun résultat trouvé</p>
-                <p className="text-gray-500 text-sm mb-4">Essayez avec d'autres mots-clés ou vérifiez l'orthographe</p>
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {['Action', 'Fantasy', 'Romance', 'Comedy'].map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      onClick={() => setQuery(suggestion)}
-                      className="px-3 py-1 bg-purple-500/20 text-purple-300 text-sm rounded-full border border-purple-500/30 hover:bg-purple-500/30 transition-colors"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
+              ) : results.length === 0 ? (
+                <div className="p-8 text-center">
+                  <p className="text-gray-400 text-lg">Aucun résultat trouvé</p>
+                  <p className="text-gray-500 text-sm">Essayez avec d'autres mots-clés</p>
                 </div>
-              </div>
-            ) : (
-              <div className="p-4 space-y-3">
-                {results.map((result, index) => (
+              ) : (
+                results.map((result) => (
                   <div
                     key={result.id}
                     onClick={() => handleResultClick(result)}
-                    className={`group cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
-                      index === selectedIndex
-                        ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-2 border-purple-400/50 shadow-lg shadow-purple-500/20'
-                        : 'hover:bg-slate-700/50 border-2 border-transparent'
-                    } rounded-2xl p-4`}
+                    className="group cursor-pointer p-4 rounded-xl hover:bg-slate-700/50 transition-all duration-300 border-2 border-transparent hover:border-purple-500/30"
                   >
                     <div className="flex gap-4">
-                      {/* Enhanced Cover Image */}
-                      <div className="flex-shrink-0 relative">
+                      {/* Image de couverture */}
+                      <div className="flex-shrink-0">
                         <img
                           src={result.cover}
                           alt={result.title}
-                          className="w-20 h-24 object-cover rounded-xl shadow-lg group-hover:shadow-purple-500/20 transition-all duration-300 group-hover:scale-105"
+                          className="w-20 h-24 object-cover rounded-xl shadow-lg"
                           loading="lazy"
                         />
-                        
-                        {/* Rating Badge */}
-                        <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                          ⭐ {result.rating}
-                        </div>
                       </div>
                       
-                      {/* Enhanced Content */}
-                      <div className="flex-1 min-w-0 space-y-3">
-                        {/* Title with Hover Effect */}
-                        <h4 className="text-white font-bold text-xl leading-tight group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-300 line-clamp-1">
+                      {/* Contenu */}
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <h4 className="text-white font-bold text-lg">
                           {result.title}
                         </h4>
                         
-                        {/* Enhanced Tags */}
+                        {/* Tags */}
                         <div className="flex flex-wrap gap-2">
-                          {result.tags?.slice(0, 3).map((tag, tagIndex) => (
+                          {result.tags?.slice(0, 2).map((tag, tagIndex) => (
                             <span
                               key={tagIndex}
-                              className="px-3 py-1.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 text-sm font-medium rounded-full border border-purple-500/40 hover:border-purple-400/60 hover:bg-purple-500/30 transition-all duration-300 backdrop-blur-sm"
+                              className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full border border-purple-500/30"
                             >
                               {tag}
                             </span>
                           ))}
                         </div>
                         
-                        {/* Enhanced Description */}
-                        <p className="text-gray-300 text-sm leading-relaxed line-clamp-2 group-hover:text-gray-200 transition-colors duration-300">
+                        {/* Description */}
+                        <p className="text-gray-300 text-sm line-clamp-2">
                           {result.description}
                         </p>
                         
-                        {/* Enhanced Stats Row */}
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-600/30">
-                          <div className="flex items-center gap-4 text-sm text-gray-400">
-                            <div className="flex items-center gap-1.5">
-                              <EyeIcon className="w-4 h-4 text-blue-400" />
-                              <span>{(result.views || 0).toLocaleString()}</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <BookOpenIcon className="w-4 h-4 text-green-400" />
-                              <span>{result.chapters} chapitres</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                              <ClockIcon className="w-4 h-4 text-yellow-400" />
-                              <span>Mis à jour récemment</span>
-                            </div>
+                        {/* Statistiques */}
+                        <div className="flex items-center gap-4 text-xs text-gray-400 pt-2 border-t border-slate-600/30">
+                          <div className="flex items-center gap-1">
+                            <StarIcon className="w-3 h-3" />
+                            <span>{result.rating}</span>
                           </div>
-                          
-                          {/* Quick Action Button */}
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <div className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
-                              Lire →
-                            </div>
+                          <div className="flex items-center gap-1">
+                            <EyeIcon className="w-3 h-3" />
+                            <span>{(result.views || 0).toLocaleString()}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <BookOpenIcon className="w-3 h-3" />
+                            <span>{result.chapters} ch.</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
-                
-                {/* Enhanced View All Results */}
-                <div className="p-4 border-t border-slate-600/30 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-2xl">
+                ))
+              )}
+              
+              {/* Bouton voir tous les résultats */}
+              {results.length > 0 && (
+                <div className="p-4 border-t border-slate-600/30">
                   <button
                     onClick={handleSearch}
-                    className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 text-white font-semibold text-lg rounded-2xl hover:from-purple-700 hover:via-pink-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30"
+                    className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
                   >
-                    <div className="flex items-center justify-center gap-3">
-                      <span>Voir Tous les Résultats</span>
-                      <span className="bg-white/20 px-3 py-1 rounded-full text-sm">
-                        {results.length} manga{results.length > 1 ? 's' : ''}
-                      </span>
-                      <span className="transform group-hover:translate-x-1 transition-transform duration-300">→</span>
-                    </div>
+                    Voir Tous les Résultats ({results.length})
                   </button>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
