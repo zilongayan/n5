@@ -30,8 +30,71 @@ function ThemeInitScript() {
 }
 
 export const metadata = {
-  title: 'N5 Portal - Galerie d\'Art Numérique',
-  description: 'Découvrez une collection moderne de galeries numériques',
+  title: {
+    default: 'MangaView - Votre Portail Manga Premium',
+    template: '%s | MangaView'
+  },
+  description: 'Découvrez des milliers de mangas en streaming gratuit. Solo Leveling, Chainsaw Man, One Piece et bien plus encore. Lecture en ligne, chapitres récents, mangas populaires et tendances.',
+  keywords: ['manga', 'anime', 'lecture en ligne', 'streaming manga', 'chapitres manga', 'Solo Leveling', 'Chainsaw Man', 'One Piece', 'gratuit'],
+  authors: [{ name: 'MangaView Team' }],
+  creator: 'MangaView',
+  publisher: 'MangaView',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://mangaview.com'),
+  alternates: {
+    canonical: '/',
+    languages: {
+      'fr': '/fr',
+      'en': '/en',
+      'es': '/es',
+      'it': '/it',
+      'pt': '/pt',
+      'ru': '/ru',
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: 'https://mangaview.com',
+    siteName: 'MangaView',
+    title: 'MangaView - Votre Portail Manga Premium',
+    description: 'Découvrez des milliers de mangas en streaming gratuit. Solo Leveling, Chainsaw Man, One Piece et bien plus encore.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'MangaView - Portail Manga Premium',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'MangaView - Votre Portail Manga Premium',
+    description: 'Découvrez des milliers de mangas en streaming gratuit',
+    images: ['/og-image.jpg'],
+    creator: '@mangaview',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code',
+    yandex: 'your-yandex-verification-code',
+    yahoo: 'your-yahoo-verification-code',
+  },
   manifest: '/manifest.json',
 };
 
