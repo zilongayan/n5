@@ -148,6 +148,7 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
       setResults([]);
       setShowDropdown(false);
       setSelectedIndex(-1);
+      setIsLoading(false);
       return;
     }
 
@@ -162,7 +163,7 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
         );
         
         setResults(filteredResults);
-        setShowDropdown(filteredResults.length > 0);
+        setShowDropdown(true); // Always show dropdown if there are results
         setSelectedIndex(-1);
         setIsLoading(false);
       }, 300);
@@ -175,10 +176,19 @@ export default function SearchBar({ placeholder = "Rechercher un manga...", clas
     const value = e.target.value;
     setQuery(value);
     setIsSearching(true);
+    
+    // Show dropdown immediately when typing
+    if (value.trim()) {
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+      setResults([]);
+    }
   };
 
   const handleInputFocus = () => {
     setIsFocused(true);
+    // Show dropdown if there's a query and results
     if (query.trim() && results.length > 0) {
       setShowDropdown(true);
     }
