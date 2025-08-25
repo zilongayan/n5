@@ -262,10 +262,6 @@ export default async function HomePage({
                 }}
                 locale={locale}
                 rank={1}
-                onNavigate={(direction) => {
-                  // Navigation logic can be implemented here
-                  console.log(`Navigate ${direction}`);
-                }}
                 canNavigate={{ prev: false, next: true }}
               />
             </div>

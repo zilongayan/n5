@@ -18,7 +18,6 @@ interface FeaturedMangaCardProps {
   };
   locale: string;
   rank: number;
-  onNavigate?: (direction: 'prev' | 'next') => void;
   canNavigate?: {
     prev: boolean;
     next: boolean;
@@ -29,8 +28,7 @@ export default function FeaturedMangaCard({
   manga, 
   locale, 
   rank, 
-  onNavigate, 
-  canNavigate = { prev: false, next: false } 
+  canNavigate = { prev: false, next: true } 
 }: FeaturedMangaCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -62,6 +60,17 @@ export default function FeaturedMangaCard({
       navigator.clipboard.writeText(window.location.origin + `/${locale}/gallery/${manga.id}`);
     }
   }, [manga, locale]);
+
+  const handleNavigation = useCallback((direction: 'prev' | 'next') => {
+    // Navigation logic can be implemented here
+    // For now, we'll just log the action
+    console.log(`Navigate ${direction}`);
+    
+    // You could implement actual navigation logic here:
+    // - Update the current manga index
+    // - Fetch new manga data
+    // - Update the component state
+  }, []);
 
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -244,7 +253,7 @@ export default function FeaturedMangaCard({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  onNavigate?.('prev');
+                  handleNavigation('prev');
                 }}
                 disabled={!canNavigate.prev}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
@@ -259,7 +268,7 @@ export default function FeaturedMangaCard({
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  onNavigate?.('next');
+                  handleNavigation('next');
                 }}
                 disabled={!canNavigate.next}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
