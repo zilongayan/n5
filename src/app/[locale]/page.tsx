@@ -233,111 +233,265 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* Popular New Titles - Featured Card + Horizontal Scroll */}
-      <section className="py-16 bg-gradient-to-r from-slate-800/50 via-purple-900/20 to-slate-800/50">
+      {/* Popular New Titles - Modern Grid Layout */}
+      <section className="py-20 bg-gradient-to-br from-slate-900/50 via-purple-900/20 to-slate-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              🔥 <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              🔥 <span className="bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
                 Popular New Titles
               </span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Les mangas les plus populaires du moment, mis à jour en temps réel
             </p>
           </div>
           
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Featured Large Card */}
-            <div className="lg:w-2/3">
+          {/* Featured Hero Section */}
+          <div className="mb-16">
+            <div className="relative group">
               <a href={`/${locale}/gallery/${featuredManga?.id}`} className="block">
-                <div className="relative bg-gradient-to-br from-slate-800/80 to-slate-700/80 backdrop-blur-sm border border-purple-500/20 rounded-2xl overflow-hidden hover:border-purple-400/50 transition-all duration-300">
-                  <div className="flex flex-col lg:flex-row min-h-[400px]">
-                    <div className="lg:w-1/2 relative">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-800/90 to-slate-700/90 backdrop-blur-sm border border-purple-500/30 hover:border-purple-400/60 transition-all duration-700 hover:shadow-2xl hover:shadow-purple-500/20">
+                  
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 animate-pulse"></div>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.4),transparent_50%)]"></div>
+                  </div>
+
+                  <div className="relative z-10 flex flex-col lg:flex-row min-h-[500px]">
+                    {/* Image Section with Enhanced Effects */}
+                    <div className="lg:w-1/2 relative overflow-hidden">
                       <img 
                         src={featuredManga?.cover} 
                         alt={featuredManga?.title} 
-                        className="w-full h-full object-cover min-h-[300px] lg:min-h-[400px]"
+                        className="w-full h-full object-cover min-h-[350px] lg:min-h-[500px] transition-transform duration-1000 group-hover:scale-110"
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                      
+                      {/* Multiple Overlay Layers */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/30 via-transparent to-transparent"></div>
+                      
+                      {/* Floating Stats Cards */}
+                      <div className="absolute top-6 left-6 space-y-3">
+                        <div className="bg-black/70 backdrop-blur-md rounded-2xl px-4 py-3 border border-purple-500/30">
+                          <div className="flex items-center gap-2">
+                            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                            <span className="text-white text-sm font-semibold">En cours</span>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-gradient-to-r from-yellow-500/90 to-orange-500/90 backdrop-blur-md rounded-2xl px-4 py-3 border border-yellow-400/30">
+                          <div className="flex items-center gap-2">
+                            <span className="text-black text-sm font-bold">⭐ 4.9</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Chapter & Views Info */}
+                      <div className="absolute bottom-6 left-6 space-y-3">
+                        <div className="bg-black/70 backdrop-blur-md rounded-2xl px-4 py-3 border border-purple-500/30">
+                          <div className="flex items-center gap-2 text-white">
+                            <span className="text-sm font-medium">📚 156 chapitres</span>
+                          </div>
+                        </div>
+                        
+                        <div className="bg-black/70 backdrop-blur-md rounded-2xl px-4 py-3 border border-purple-500/30">
+                          <div className="flex items-center gap-2 text-white">
+                            <span className="text-sm font-medium">👁️ 1.2M vues</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="lg:w-1/2 p-8 flex flex-col justify-center">
-                      <div className="mb-6">
-                        <h3 className="text-3xl font-bold text-white mb-4 line-clamp-2">
+                    {/* Content Section */}
+                    <div className="lg:w-1/2 p-10 lg:p-12 flex flex-col justify-center">
+                      <div className="mb-8">
+                        {/* Rank Badge */}
+                        <div className="inline-flex items-center gap-3 mb-6">
+                          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold text-lg px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
+                            <span className="text-2xl">🔥</span>
+                            NO. {featuredIndex + 1}
+                          </div>
+                          <div className="bg-purple-500/20 text-purple-300 text-sm px-3 py-2 rounded-full border border-purple-500/30 backdrop-blur-sm">
+                            POPULAIRE
+                          </div>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-700">
                           {featuredManga?.title}
                         </h3>
                         
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {featuredManga?.tags?.slice(0, 3).map((tag: string, tagIndex: number) => (
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-3 mb-6">
+                          {featuredManga?.tags?.slice(0, 4).map((tag: string, tagIndex: number) => (
                             <span 
                               key={tagIndex}
-                              className="px-3 py-1 bg-purple-500/20 text-purple-300 text-sm rounded-full border border-purple-500/30"
+                              className="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 text-sm font-medium rounded-full border border-purple-500/40 hover:border-purple-400/60 hover:bg-purple-500/30 transition-all duration-300 backdrop-blur-sm"
                             >
                               {tag.toUpperCase()}
                             </span>
                           ))}
                         </div>
                         
-                        <p className="text-gray-400 text-lg line-clamp-3">
+                        {/* Description */}
+                        <p className="text-gray-300 text-lg leading-relaxed line-clamp-4 group-hover:text-gray-200 transition-colors duration-500">
                           {featuredManga?.description || 'Description non disponible'}
                         </p>
                       </div>
                       
-                      <div className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25">
-                        Lire le Manga
-                        <span className="ml-2">→</span>
+                      {/* Action Buttons */}
+                      <div className="space-y-4">
+                        {/* Main CTA */}
+                        <div className="inline-flex items-center justify-center w-full px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 text-white font-bold text-lg rounded-2xl hover:from-purple-700 hover:via-pink-700 hover:to-purple-800 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30 group-hover:shadow-purple-500/50">
+                          <span className="mr-3">📖</span>
+                          Lire le Manga
+                          <span className="ml-3 transform group-hover:translate-x-2 transition-transform duration-500">→</span>
+                        </div>
+
+                        {/* Secondary Actions */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <button className="p-3 rounded-xl bg-slate-700/50 hover:bg-red-500/20 border border-slate-600/50 hover:border-red-500/50 transition-all duration-300 group-hover:bg-slate-600/50 backdrop-blur-sm">
+                              <span className="text-2xl">❤️</span>
+                            </button>
+                            
+                            <button className="p-3 rounded-xl bg-slate-700/50 hover:bg-blue-500/20 border border-slate-600/50 hover:border-blue-500/50 transition-all duration-300 group-hover:bg-slate-600/50 backdrop-blur-sm">
+                              <span className="text-2xl">🔖</span>
+                            </button>
+                            
+                            <button className="p-3 rounded-xl bg-slate-700/50 hover:bg-green-500/20 border border-slate-600/50 hover:border-green-500/50 transition-all duration-300 group-hover:bg-slate-600/50 backdrop-blur-sm">
+                              <span className="text-2xl">📤</span>
+                            </button>
+                          </div>
+
+                          {/* Quick Stats */}
+                          <div className="flex items-center gap-6 text-sm text-gray-400">
+                            <div className="flex items-center gap-2">
+                              <span>👁️ 1.2M</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>⭐ 4.9</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* NO. 1 Badge and Navigation */}
-                  <div className="absolute top-4 right-4 flex items-center gap-2">
-                    <span className="text-white text-sm font-bold">NO. 1</span>
-                    <div className="flex gap-1">
-                      <button className="w-8 h-8 bg-slate-800/80 text-white rounded flex items-center justify-center hover:bg-slate-700 transition-colors">
+                  {/* Navigation Controls */}
+                  <div className="absolute top-6 right-6">
+                    <div className="flex gap-3">
+                      <button className="w-12 h-12 bg-slate-800/80 text-white rounded-2xl flex items-center justify-center hover:bg-purple-600 hover:scale-110 transition-all duration-300 backdrop-blur-sm border border-slate-700/50">
                         ←
                       </button>
-                      <button className="w-8 h-8 bg-slate-800/80 text-white rounded flex items-center justify-center hover:bg-slate-700 transition-colors">
+                      <button className="w-12 h-12 bg-slate-800/80 text-white rounded-2xl flex items-center justify-center hover:bg-purple-600 hover:scale-110 transition-all duration-300 backdrop-blur-sm border border-slate-700/50">
                         →
                       </button>
                     </div>
                   </div>
+
+                  {/* Hover Effects */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl" />
+                  
+                  {/* Glow Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 rounded-3xl blur-xl" />
                 </div>
               </a>
             </div>
-            
-            {/* Horizontal Scroll Cards */}
-            <div className="lg:w-1/3">
-              <div className="space-y-4">
-                {sidebarMangas.map((manga) => (
-                  <a key={manga.id} href={`/${locale}/gallery/${manga.id}`} className="block">
-                    <div className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300 hover:bg-slate-700/60">
-                      <div className="flex gap-4">
+          </div>
+          
+          {/* Popular Grid Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {sidebarMangas.slice(0, 12).map((manga, index) => (
+              <div key={manga.id} className="group">
+                <a href={`/${locale}/gallery/${manga.id}`} className="block">
+                  <div className="relative bg-gradient-to-br from-slate-800/70 to-slate-700/70 backdrop-blur-sm rounded-2xl p-5 border border-slate-700/50 hover:border-purple-500/40 transition-all duration-500 hover:bg-slate-700/70 hover:shadow-xl hover:shadow-purple-500/10 transform hover:-translate-y-2 overflow-hidden">
+                    
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-5 rounded-2xl">
+                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500"></div>
+                    </div>
+
+                    <div className="relative z-10 space-y-4">
+                      {/* Cover Image */}
+                      <div className="relative">
                         <img 
                           src={manga.cover} 
                           alt={manga.title} 
-                          className="w-20 h-24 object-cover rounded-lg"
+                          className="w-full h-48 object-cover rounded-xl shadow-lg group-hover:shadow-purple-500/20 transition-all duration-500 group-hover:scale-105"
                           loading="lazy"
                         />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-white font-semibold text-sm line-clamp-2 mb-2">{manga.title}</h4>
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {manga.tags?.slice(0, 2).map((tag, tagIndex) => (
-                              <span key={tagIndex} className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded border border-purple-500/30">
-                                {tag.toUpperCase()}
-                              </span>
-                            ))}
+                        
+                        {/* Rank Badge */}
+                        <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-lg">
+                          #{index + 2}
+                        </div>
+
+                        {/* Rating Overlay */}
+                        <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-1">
+                          <div className="flex items-center gap-1">
+                            <span className="text-yellow-400 text-xs">⭐</span>
+                            <span className="text-white text-xs font-semibold">4.{Math.floor(Math.random() * 5) + 5}</span>
                           </div>
-                          <p className="text-gray-400 text-xs line-clamp-2">{manga.description || 'Description non disponible'}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="space-y-3">
+                        {/* Title */}
+                        <h4 className="text-white font-bold text-lg leading-tight group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-pink-400 group-hover:bg-clip-text transition-all duration-500 line-clamp-2">
+                          {manga.title}
+                        </h4>
+                        
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {manga.tags?.slice(0, 2).map((tag, tagIndex) => (
+                            <span 
+                              key={tagIndex} 
+                              className="px-2.5 py-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 text-xs font-medium rounded-full border border-purple-500/30 hover:border-purple-400/50 transition-all duration-300"
+                            >
+                              {tag.toUpperCase()}
+                            </span>
+                          ))}
+                        </div>
+                        
+                        {/* Description */}
+                        <p className="text-gray-400 text-sm leading-relaxed line-clamp-2 group-hover:text-gray-300 transition-colors duration-300">
+                          {manga.description || 'Description non disponible'}
+                        </p>
+                        
+                        {/* Stats Row */}
+                        <div className="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-slate-600/30">
+                          <div className="flex items-center gap-1">
+                            <span>👁️ {(Math.random() * 500000 + 100000).toLocaleString()}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span>📚 {Math.floor(Math.random() * 100) + 20} ch.</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </a>
-                ))}
+                    
+                    {/* Hover Effects */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+                  </div>
+                </a>
               </div>
-            </div>
+            ))}
+          </div>
+          
+          {/* View All Button */}
+          <div className="text-center mt-12">
+            <a 
+              href={`/${locale}/popular`}
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold text-lg rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25"
+            >
+              Voir Tous les Mangas Populaires
+              <span className="ml-2">→</span>
+            </a>
           </div>
         </div>
       </section>
