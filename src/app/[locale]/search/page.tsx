@@ -2,6 +2,10 @@ import Link from 'next/link';
 import {AgeGate} from '@/components/AgeGate';
 import {NavBar} from '@/components/NavBar';
 import {getCatalogPage, searchItems} from '@/data/catalog';
+import {POPULAR_TAGS, getTagsByGroup} from '@/lib/tagMapping';
+import {TagFilter} from '@/components/TagFilter';
+import {ErrorState} from '@/components/ErrorState';
+import {EmptyState} from '@/components/EmptyState';
 
 export default async function SearchPage({
   params,
@@ -10,173 +14,197 @@ export default async function SearchPage({
   params: Promise<{locale: string}>;
   searchParams: Promise<{q?: string; tags?: string; artists?: string; page?: string}>;
 }) {
+  const {locale} = await params;
   const {q = '', tags = '', artists = '', page = '1'} = await searchParams;
   const pageNum = Number(page) || 1;
 
-  const results = searchItems({query: q, tags, artists, page: pageNum});
-  const totalPages = Math.ceil(results.length / 24);
+  let results: any[] = [];
+  let totalPages = 1;
+
+  try {
+    if (q || tags || artists) {
+      results = await searchItems({query: q, tags, artists, page: pageNum});
+      totalPages = Math.ceil(results.length / 24);
+    } else {
+      // If no search query, show popular manga
+      const catalogData = await getCatalogPage({ page: pageNum });
+      results = catalogData.popular || [];
+      totalPages = Math.ceil((catalogData.popularTotal || 0) / 24);
+    }
+  } catch (error) {
+    console.error('Search error:', error);
+    results = [];
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/30 to-slate-900">
       <AgeGate />
       <NavBar />
       
-      <main className="max-w-6xl mx-auto w-full p-6 space-y-8">
+      <main className="pt-16">
         {/* Search Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-white">Search Results</h1>
-          {q && (
-            <p className="text-gray-300">
-              Found {results.length} results for "{q}"
-            </p>
-          )}
-        </div>
-
-        {/* Advanced Filters */}
-        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Advanced Filters</h2>
-          <form className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Search Query</label>
-              <input
-                type="text"
-                name="q"
-                defaultValue={q}
-                placeholder="Enter search terms..."
-                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Tags</label>
-              <input
-                type="text"
-                name="tags"
-                defaultValue={tags}
-                placeholder="Filter by tags..."
-                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Artists</label>
-              <input
-                type="text"
-                name="artists"
-                defaultValue={artists}
-                placeholder="Filter by artists..."
-                className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-            <div className="md:col-span-3 flex gap-4">
-              <button
-                type="submit"
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
-              >
-                Search
-              </button>
-              <Link
-                href="/en/search"
-                className="px-6 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all duration-300 border border-white/20"
-              >
-                Clear
-              </Link>
-            </div>
-          </form>
-        </div>
-
-        {/* Quick Filters */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">Popular Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {['action', 'romance', 'comedy', 'drama', 'fantasy', 'sci-fi', 'horror', 'slice-of-life'].map((tag) => (
-              <Link
-                key={tag}
-                href={`/en/search?tags=${tag}`}
-                className="px-3 py-1 bg-white/10 text-white rounded-full hover:bg-white/20 transition-all duration-300 text-sm"
-              >
-                #{tag}
-              </Link>
-            ))}
+        <section className="py-16 bg-gradient-to-r from-slate-800/80 via-purple-900/40 to-slate-800/80">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              🔍 Recherche de Manga
+            </h1>
+            {q && (
+              <p className="text-xl text-gray-300">
+                {results.length} résultats trouvés pour "{q}"
+              </p>
+            )}
           </div>
-        </div>
+        </section>
+
+        {/* Search Form */}
+        <section className="py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-8">
+              <h2 className="text-2xl font-bold text-white mb-6 text-center">Filtres de Recherche</h2>
+              
+              <form className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Recherche</label>
+                  <input
+                    type="text"
+                    name="q"
+                    defaultValue={q}
+                    placeholder="Entrez des termes de recherche..."
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Tags</label>
+                  <input
+                    type="text"
+                    name="tags"
+                    defaultValue={tags}
+                    placeholder="Filtrer par tags..."
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20"
+                  />
+                </div>
+                
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    className="flex-1 px-6 py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    Rechercher
+                  </button>
+                  <Link
+                    href={`/${locale}/search`}
+                    className="px-6 py-3 bg-slate-700 text-white font-semibold rounded-lg hover:bg-slate-600 transition-colors border border-slate-600"
+                  >
+                    Effacer
+                  </Link>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
 
         {/* Results */}
-        {results.length > 0 ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Results ({results.length})</h2>
-              <div className="flex items-center space-x-2 text-sm text-gray-400">
-                <span>Sort by:</span>
-                <select className="bg-white/10 border border-white/20 rounded px-2 py-1 text-white">
-                  <option>Relevance</option>
-                  <option>Date</option>
-                  <option>Popularity</option>
-                  <option>Title</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {results.map((item, index) => (
-                <Link
-                  key={item.id}
-                  href={`/en/gallery/${item.id}`}
-                  className="group block bg-white/5 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:scale-105 animate-fade-in-up"
-                  style={{animationDelay: `${index * 50}ms`}}
-                >
-                  <div className="relative">
-                    <img
-                      src={item.cover}
-                      alt={item.title}
-                      className="aspect-[3/4] object-cover w-full group-hover:brightness-110 transition-all duration-300"
-                    />
-                    <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                      {Math.floor(Math.random() * 100)}%
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {results.length > 0 ? (
+              <>
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-3xl font-bold text-white">
+                    Résultats ({results.length})
+                  </h2>
+                  <div className="text-gray-400">
+                    Page {pageNum} sur {totalPages}
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {results.map((manga) => (
+                    <div key={manga.id} className="bg-slate-800/80 border border-slate-700 rounded-lg overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:scale-105">
+                      <Link href={`/${locale}/gallery/${manga.id}`}>
+                        {/* Cover Image */}
+                        <div className="relative">
+                          <img 
+                            src={manga.cover} 
+                            alt={manga.title} 
+                            className="w-full h-64 object-cover hover:scale-110 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="p-4">
+                          <h3 className="text-base font-semibold text-white mb-2 line-clamp-2 hover:text-purple-400 transition-colors">
+                            {manga.title}
+                          </h3>
+                          
+                          {/* Tags */}
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {manga.tags && manga.tags.slice(0, 2).map((tag: string, tagIndex: number) => (
+                              <span 
+                                key={tagIndex}
+                                className="px-2 py-1 bg-slate-700 text-gray-300 text-xs rounded border border-slate-600"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          
+                          {/* Description */}
+                          <p className="text-gray-400 text-sm line-clamp-2">
+                            {manga.description}
+                          </p>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="flex justify-center mt-12">
+                    <div className="flex gap-2">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                        <Link
+                          key={pageNum}
+                          href={`/${locale}/search?q=${q}&tags=${tags}&artists=${artists}&page=${pageNum}`}
+                          className={`px-4 py-2 rounded-lg border transition-colors ${
+                            pageNum === Number(page) 
+                              ? 'bg-purple-600 text-white border-purple-600' 
+                              : 'bg-slate-700 text-gray-300 border-slate-600 hover:bg-slate-600'
+                          }`}
+                        >
+                          {pageNum}
+                        </Link>
+                      ))}
                     </div>
                   </div>
-                  <div className="p-3">
-                    <div className="text-sm text-white line-clamp-2 group-hover:text-purple-300 transition-colors">
-                      {item.title}
-                    </div>
-                    <div className="mt-1 text-xs text-gray-400 line-clamp-1">
-                      {item.tags.slice(0, 2).join(', ')}
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center space-x-2">
-                {Array.from({length: totalPages}, (_, i) => i + 1).map((pageNum) => (
+                )}
+              </>
+            ) : (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  {q ? 'Aucun résultat trouvé' : 'Commencez votre recherche'}
+                </h3>
+                <p className="text-gray-400 mb-8">
+                  {q 
+                    ? `Aucun manga trouvé pour "${q}"` 
+                    : 'Utilisez les filtres ci-dessus pour trouver vos mangas préférés'
+                  }
+                </p>
+                {!q && (
                   <Link
-                    key={pageNum}
-                    href={`/en/search?q=${q}&tags=${tags}&artists=${artists}&page=${pageNum}`}
-                    className={`px-3 py-2 rounded ${
-                      pageNum === pageNum 
-                        ? 'bg-purple-600 text-white' 
-                        : 'bg-white/10 text-white hover:bg-white/20'
-                    } transition-all duration-300`}
+                    href={`/${locale}`}
+                    className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                   >
-                    {pageNum}
+                    Retour à l'accueil
                   </Link>
-                ))}
+                )}
               </div>
             )}
           </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-white mb-2">No results found</h3>
-            <p className="text-gray-400 mb-6">Try adjusting your search terms or filters</p>
-            <Link 
-              href="/en" 
-              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300"
-            >
-              Browse All
-            </Link>
-          </div>
-        )}
+        </section>
       </main>
     </div>
   );

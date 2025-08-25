@@ -1,276 +1,339 @@
-# N5 Portal - Galerie d'Art Numérique
+# MangaView Portal
 
-Une plateforme moderne de galerie d'art numérique avec système d'authentification, gestion des favoris, collections et interface multilingue.
+Un portail manga moderne inspiré de MangaDex, construit avec Next.js 15, TypeScript, Tailwind CSS et une architecture de cache intelligente.
 
 ## 🚀 Fonctionnalités
 
 ### ✨ Interface Utilisateur
-- **Design moderne** avec thème sombre/clair
-- **Interface responsive** adaptée mobile/desktop
-- **Navigation fluide** avec animations
-- **Recherche avancée** avec filtres par tags/artistes
-- **Système de pagination** pour les galeries
+- **Design sombre moderne** avec palette de couleurs personnalisée
+- **Navigation responsive** avec support mobile/desktop
+- **Système de thème** configurable
+- **Support multilingue** (EN/FR/ES/IT/PT/RU) avec détection automatique
+- **Composants UI** optimisés avec shadcn/ui
 
-### 🔐 Authentification
-- **Inscription/Connexion** sécurisée
-- **Persistance de session** avec localStorage
-- **Protection des routes** privées
-- **Gestion des profils** utilisateur
-- **Déconnexion** automatique
+### 📚 Gestion des Manga
+- **Intégration MangaDex API v5** complète
+- **Recherche avancée** par titre, tags, langue, statut
+- **Filtrage par tags** avec mapping UUID intelligent
+- **Navigation par chapitres** avec métadonnées complètes
+- **Prévisualisation des pages** cliquable
 
-### ❤️ Gestion des Favoris
-- **Ajout/Suppression** de favoris
-- **Page dédiée** aux favoris
-- **Synchronisation** en temps réel
-- **Interface intuitive** avec boutons d'action
+### 🔍 Lecteur de Manga
+- **Modes de lecture** multiples (Long strip, Single page, Fit width/height)
+- **Navigation clavier** (flèches, espace, Home/End)
+- **Contrôles de zoom** (50% à 300%)
+- **Préchargement intelligent** des pages
+- **Gestion d'erreurs** avec retry automatique
+- **Barre d'outils** extensible
 
-### 📚 Collections
-- **Création de collections** personnalisées
-- **Gestion des items** dans les collections
-- **Partage public/privé** des collections
-- **Interface de gestion** complète
+### 💾 Système de Cache Intelligent
+- **Cache multi-niveaux** : localStorage, sessionStorage, mémoire
+- **Cache d'images** avec TTL configurable
+- **Cache de composants** avec React.memo
+- **Cache de données** avec React Query
+- **Gestionnaire de cache** avec interface UI
+- **Headers HTTP** optimisés (Cache-Control, ETag)
 
-### 🌍 Internationalisation
-- **Support multilingue** (EN, FR, ES, IT, PT, RU)
-- **Sélecteur de langue** dans la navbar
-- **Traductions complètes** de l'interface
-- **Détection automatique** de la langue
+### 🧪 Tests et Qualité
+- **Tests unitaires** avec Vitest + React Testing Library
+- **Tests e2e** avec Playwright
+- **CI/CD** avec GitHub Actions
+- **Linting** et vérification de types
+- **Couverture de code** avec rapports
 
-### 🎨 Galeries
-- **Catalogue dynamique** avec données mockées
-- **Pages populaires/récentes** avec tri intelligent
-- **Galerie aléatoire** pour la découverte
-- **Détails complets** des œuvres
+### 📱 PWA et Performance
+- **Service Worker** pour le cache offline
+- **Manifest** pour l'installation
+- **LCP < 2.5s** avec Next.js Image Optimization
+- **Lighthouse ≥ 90** avec optimisations CSS/JS
+- **Streaming SSR** et ISR
 
-## 🛠️ Technologies
+## 🛠️ Architecture Technique
 
-### Frontend
+### Stack Principal
 - **Next.js 15** avec App Router
-- **React 18** avec hooks modernes
-- **TypeScript** pour la sécurité des types
-- **Tailwind CSS** pour le styling
-- **Framer Motion** pour les animations
+- **TypeScript** strict
+- **Tailwind CSS 4** avec design system
+- **React Query** pour la gestion d'état
+- **Prisma** pour la base de données
 
-### Backend
-- **Next.js API Routes** pour l'API
-- **Prisma ORM** pour la base de données
-- **SQLite** pour le stockage local
-- **bcryptjs** pour le hachage des mots de passe
-- **Cookies sécurisés** pour les sessions
+### Composants Clés
+```typescript
+// Client MangaDex typé
+lib/mangadex.ts          // API client avec retry/backoff
+lib/tagMapping.ts        // Mapping tags nom → UUID
+lib/cacheConfig.ts       // Configuration cache globale
 
-### Base de Données
-- **SQLite** avec Prisma
-- **Modèles** : User, Favorite, Collection, Comment
-- **Relations** optimisées avec cascade
-- **Migrations** automatiques
+// Composants UI
+components/CachedImage.tsx    // Image avec cache local
+components/TagFilter.tsx      // Filtrage par tags
+components/ReaderToolbar.tsx  // Contrôles lecteur
+components/ModeToggle.tsx     // Modes de lecture
+components/ImageList.tsx      // Liste d'images avec préchargement
 
-## 📦 Installation
+// Hooks personnalisés
+hooks/useCache.ts            // Gestion cache client
+hooks/useTranslations.ts     // Internationalisation
+```
+
+### Système de Cache
+```typescript
+// Configuration cache
+const CACHE_CONFIG = {
+  images: { ttl: 24 * 60 * 60 * 1000, maxSize: 100 },
+  data: { ttl: 5 * 60 * 1000, maxSize: 50 },
+  components: { ttl: 10 * 60 * 1000, maxSize: 30 }
+};
+
+// Utilisation
+const { data, isLoading } = useCache('manga-list', fetchMangaList, {
+  ttl: CACHE_CONFIG.data.ttl,
+  maxSize: CACHE_CONFIG.data.maxSize
+});
+```
+
+## 🚀 Installation et Démarrage
 
 ### Prérequis
 - Node.js 18+ 
 - npm ou yarn
-- Git
+- Base de données (MySQL/PostgreSQL pour Prisma)
 
-### Étapes d'installation
-
-1. **Cloner le repository**
+### Installation
 ```bash
-git clone <repository-url>
+# Cloner le projet
+git clone <repository>
 cd portal
-```
 
-2. **Installer les dépendances**
-```bash
+# Installer les dépendances
 npm install
-```
 
-3. **Configuration de l'environnement**
-```bash
+# Configuration environnement
 cp .env.example .env.local
-```
+# Éditer .env.local avec vos variables
 
-4. **Configuration de la base de données**
-```bash
-npx prisma generate
-npx prisma db push
-```
+# Générer Prisma client
+npm run db:generate
 
-5. **Lancer le serveur de développement**
-```bash
+# Démarrer en développement
 npm run dev
 ```
 
-L'application sera disponible sur `http://localhost:3000`
+### Scripts Disponibles
+```bash
+npm run dev              # Démarrage développement
+npm run build            # Build production
+npm run start            # Démarrage production
+npm run lint             # Linting ESLint
+npm run type-check       # Vérification TypeScript
+npm run test             # Tests unitaires (watch)
+npm run test:unit        # Tests unitaires (once)
+npm run test:e2e         # Tests end-to-end
+npm run test:e2e:ui      # Tests e2e avec interface
+```
 
 ## 🔧 Configuration
 
-### Variables d'environnement
-```env
-# Base de données
-DATABASE_URL="file:./dev.db"
-
-# URL de base (optionnel)
-NEXT_PUBLIC_BASE_URL="http://localhost:3000"
-```
-
-### Scripts disponibles
+### Variables d'Environnement
 ```bash
-# Développement
-npm run dev          # Lance le serveur de développement
-npm run build        # Build de production
-npm run start        # Lance le serveur de production
-
 # Base de données
-npm run db:generate  # Génère le client Prisma
-npm run db:push      # Pousse le schéma vers la DB
-npm run db:studio    # Ouvre Prisma Studio
+DATABASE_URL="mysql://user:pass@localhost:3306/mangaview"
 
-# Linting et formatage
-npm run lint         # Vérifie le code
-npm run format       # Formate le code
+# MangaDex API
+MANGADEX_API_URL="https://api.mangadex.org"
+MANGADEX_UPLOADS_URL="https://uploads.mangadex.org"
+
+# Cache
+CACHE_TTL_IMAGES=86400000      # 24h
+CACHE_TTL_DATA=300000          # 5min
+CACHE_MAX_SIZE=100             # Éléments max
 ```
 
-## 📁 Structure du Projet
-
-```
-portal/
-├── src/
-│   ├── app/                    # App Router Next.js
-│   │   ├── [locale]/          # Routes internationalisées
-│   │   │   ├── login/         # Page de connexion
-│   │   │   ├── signup/        # Page d'inscription
-│   │   │   ├── profile/       # Page de profil
-│   │   │   ├── favorites/     # Page des favoris
-│   │   │   └── collections/   # Page des collections
-│   │   └── api/               # Routes API
-│   │       ├── auth/          # Vérification d'auth
-│   │       ├── login/         # Connexion
-│   │       ├── logout/        # Déconnexion
-│   │       └── signup/        # Inscription
-│   ├── components/            # Composants React
-│   │   ├── NavBar.tsx        # Navigation principale
-│   │   ├── AgeGate.tsx       # Vérification d'âge
-│   │   ├── FavoriteButton.tsx # Bouton favoris
-│   │   └── ...
-│   ├── hooks/                # Hooks personnalisés
-│   │   ├── useAuth.ts        # Hook d'authentification
-│   │   └── useTranslations.ts # Hook de traduction
-│   ├── lib/                  # Utilitaires
-│   │   ├── auth.ts           # Logique d'authentification
-│   │   ├── db.ts             # Configuration Prisma
-│   │   └── cookies.ts        # Gestion des cookies
-│   ├── data/                 # Données mockées
-│   │   └── catalog.ts        # Catalogue des galeries
-│   ├── i18n/                 # Internationalisation
-│   │   ├── locales.ts        # Langues supportées
-│   │   └── translations.ts   # Système de traduction
-│   └── messages/             # Fichiers de traduction
-│       ├── en.json           # Anglais
-│       ├── fr.json           # Français
-│       └── ...
-├── prisma/                   # Configuration Prisma
-│   └── schema.prisma         # Schéma de base de données
-├── public/                   # Assets statiques
-└── package.json              # Dépendances et scripts
+### Configuration Next.js
+```typescript
+// next.config.ts
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      { hostname: 'uploads.mangadex.org' },
+      { hostname: '*.mangadex.network' }
+    ]
+  },
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@tanstack/react-query']
+  }
+};
 ```
 
-## 🎯 Fonctionnalités Principales
+## 📊 Tests et Qualité
 
-### Système d'Authentification
-- **Inscription** avec validation email/mot de passe
-- **Connexion** sécurisée avec hachage bcrypt
-- **Sessions persistantes** avec cookies + localStorage
-- **Protection des routes** privées
-- **Déconnexion** avec nettoyage des données
+### Tests Unitaires
+```bash
+# Lancer tous les tests
+npm run test:unit
 
-### Gestion des Favoris
-- **Ajout/Suppression** en un clic
-- **Synchronisation** en temps réel
-- **Page dédiée** avec interface moderne
-- **Intégration** dans les galeries
+# Avec couverture
+npm run test:unit:coverage
 
-### Collections Personnalisées
-- **Création** de collections personnalisées
-- **Gestion** des items dans les collections
-- **Partage** public/privé
-- **Interface** de gestion complète
+# Tests spécifiques
+npm run test:unit -- --run src/lib/__tests__/mangadex.test.ts
+```
 
-### Catalogue Dynamique
-- **Données mockées** pour le développement
-- **Pagination** intelligente
-- **Recherche** avancée avec filtres
-- **Tri** par popularité/récent
+### Tests End-to-End
+```bash
+# Lancer Playwright
+npm run test:e2e
 
-## 🔒 Sécurité
+# Interface graphique
+npm run test:e2e:ui
 
-- **Hachage des mots de passe** avec bcrypt
-- **Cookies sécurisés** pour les sessions
-- **Validation** côté client et serveur
-- **Protection CSRF** intégrée
-- **Sanitisation** des données utilisateur
+# Mode debug
+npm run test:e2e:debug
+```
 
-## 🌐 Internationalisation
-
-### Langues Supportées
-- 🇫🇷 Français (par défaut)
-- 🇺🇸 Anglais
-- 🇪🇸 Espagnol
-- 🇮🇹 Italien
-- 🇵🇹 Portugais
-- 🇷🇺 Russe
-
-### Système de Traduction
-- **Fichiers JSON** organisés par langue
-- **Hook useTranslations** pour l'accès facile
-- **Sélecteur de langue** dans la navbar
-- **Détection automatique** de la langue
+### CI/CD
+Le projet inclut un workflow GitHub Actions qui :
+- Lance les tests sur Node.js 18 et 20
+- Vérifie le linting et les types
+- Exécute les tests unitaires et e2e
+- Build le projet
+- Upload la couverture de code
 
 ## 🎨 Design System
 
-### Thèmes
-- **Mode clair/sombre** avec toggle
-- **Couleurs cohérentes** avec variables CSS
-- **Typography** optimisée pour la lisibilité
-- **Animations** fluides et modernes
+### Palette de Couleurs
+```css
+/* Couleurs principales */
+--bg-primary: #0B0C0F        /* Fond principal */
+--surface-primary: #151821    /* Surfaces */
+--text-primary: #E6E7EB      /* Texte principal */
+--text-muted: #9AA3B2        /* Texte secondaire */
+--accent-primary: #7C5CFF    /* Accent principal */
+
+/* États */
+--success: #10B981
+--warning: #F59E0B
+--error: #EF4444
+--info: #3B82F6
+```
 
 ### Composants
-- **Cards** avec hover effects
-- **Boutons** avec états multiples
-- **Formulaires** avec validation
-- **Modals** et overlays
+- **Boutons** : `theme-button-primary`, `theme-button-secondary`
+- **Cartes** : `theme-card` avec hover effects
+- **Tags** : `tag-primary` avec animations
+- **Formulaires** : Inputs stylisés avec validation
+
+## 🔍 API et Intégrations
+
+### MangaDex API v5
+```typescript
+// Endpoints supportés
+GET /manga                    // Liste des manga
+GET /manga/{id}              // Détails manga
+GET /cover/{id}              // Images de couverture
+GET /chapter                 // Liste des chapitres
+GET /at-home/server/{id}     // Serveur de lecture
+
+// Paramètres de recherche
+{
+  limit: 24,                 // Résultats par page
+  offset: 0,                 // Pagination
+  title: "search term",      // Recherche par titre
+  includedTags: ["uuid"],    // Filtrage par tags
+  order: { followedCount: "desc" }  // Tri
+}
+```
+
+### Proxy API Local
+```typescript
+// Route handler Edge
+app/api/mdx/[...path]/route.ts
+
+// Fonctionnalités
+- Cache-Control headers
+- Rate limiting
+- CORS configuration
+- Error handling
+- Retry logic
+```
+
+## 📱 PWA et Offline
+
+### Service Worker
+- Cache des pages visitées
+- Cache des images et assets
+- Stratégie "Cache First" pour les ressources statiques
+- Stratégie "Network First" pour l'API
+
+### Manifest
+```json
+{
+  "name": "MangaView Portal",
+  "short_name": "MangaView",
+  "theme_color": "#0B0C0F",
+  "background_color": "#0B0C0F",
+  "display": "standalone"
+}
+```
 
 ## 🚀 Déploiement
 
 ### Vercel (Recommandé)
 ```bash
-npm run build
+# Installation Vercel CLI
+npm i -g vercel
+
+# Déploiement
 vercel --prod
 ```
 
-### Autres Plateformes
-- **Netlify** : Compatible avec Next.js
-- **Railway** : Déploiement simple
-- **Docker** : Support complet
+### Docker
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
 
 ## 🤝 Contribution
 
-1. **Fork** le projet
-2. **Créer** une branche feature (`git checkout -b feature/AmazingFeature`)
-3. **Commit** les changements (`git commit -m 'Add AmazingFeature'`)
-4. **Push** vers la branche (`git push origin feature/AmazingFeature`)
-5. **Ouvrir** une Pull Request
+### Guidelines
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Commit les changements (`git commit -m 'Add AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
 
-## 📝 Licence
+### Standards de Code
+- **TypeScript strict** avec types explicites
+- **ESLint** + **Prettier** pour la cohérence
+- **Tests unitaires** pour les nouvelles fonctionnalités
+- **Tests e2e** pour les flux utilisateur
+- **Documentation** des composants complexes
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+## 📄 Licence
+
+Ce projet est sous licence MIT. Voir `LICENSE` pour plus de détails.
 
 ## 🙏 Remerciements
 
+- **MangaDex** pour l'API publique et l'inspiration
 - **Next.js** pour le framework React
-- **Prisma** pour l'ORM moderne
 - **Tailwind CSS** pour le système de design
-- **Vercel** pour l'hébergement
+- **Communauté open source** pour les composants et outils
+
+## 📞 Support
+
+Pour toute question ou problème :
+- Ouvrir une issue sur GitHub
+- Consulter la documentation
+- Contacter l'équipe de développement
 
 ---
 
-**N5 Portal** - Une expérience moderne de galerie d'art numérique 🎨
+**MangaView Portal** - Découvrez et lisez vos manga préférés avec une expérience moderne et intuitive ! 🎌📚

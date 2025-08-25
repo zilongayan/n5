@@ -2,6 +2,7 @@
 
 import {useState, useEffect} from 'react';
 import Link from 'next/link';
+import {useTranslations} from '@/hooks/useTranslations';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export function SearchModal({isOpen, onClose}: SearchModalProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const {locale} = useTranslations();
 
   // Simuler des résultats de recherche
   const mockSearch = async (searchQuery: string) => {
@@ -143,12 +145,12 @@ export function SearchModal({isOpen, onClose}: SearchModalProps) {
           ) : (
             <div className="space-y-2">
               {results.map((item) => (
-                <Link
-                  key={item.id}
-                  href={`/en/${item.type === 'gallery' ? 'gallery' : item.type}/${item.id}`}
-                  onClick={onClose}
-                  className="flex items-center space-x-4 p-3 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-colors group"
-                >
+                                  <Link
+                    key={item.id}
+                    href={`/${locale}/${item.type === 'gallery' ? 'gallery' : item.type}/${item.id}`}
+                    onClick={onClose}
+                    className="flex items-center space-x-4 p-3 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-xl transition-colors group"
+                  >
                   <div className="text-2xl">{getTypeIcon(item.type)}</div>
                   <div className="flex-1">
                     <h4 className="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">

@@ -11,8 +11,9 @@ export default async function PopularPage({
 }) {
   const {page = '1'} = await searchParams;
   const pageNum = Number(page) || 1;
-  const {popular, total} = await getCatalogPage({page: pageNum});
-  const totalPages = Math.ceil(total / 24);
+  const {popular, total, popularTotal} = await getCatalogPage({page: pageNum});
+  const totalItems = typeof popularTotal === 'number' ? popularTotal : total;
+  const totalPages = Math.ceil(totalItems / 24);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-900 dark:via-blue-900/20 dark:to-purple-900/20">
       <AgeGate />

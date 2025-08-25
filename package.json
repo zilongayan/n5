@@ -12,11 +12,21 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma db push --force-reset",
     "format": "prettier --write .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:unit": "vitest run",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@prisma/client": "^6.13.0",
+    "@tanstack/react-query": "^5.85.3",
     "bcryptjs": "^3.0.2",
+    "critters": "^0.0.23",
+    "keen-slider": "^6.8.6",
     "next": "15.4.6",
     "next-intl": "^4.3.4",
     "prisma": "^6.13.0",
@@ -26,13 +36,20 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^15.0.0",
+    "@testing-library/user-event": "^14.5.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.2.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
+    "jsdom": "^23.0.1",
+    "playwright": "^1.40.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^1.0.0"
   }
 }

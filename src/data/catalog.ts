@@ -3,93 +3,181 @@ export type CatalogItem = {
   title: string;
   cover: string;
   tags: string[];
+  description?: string;
 };
 
-function generateMockItem(id: number): CatalogItem {
+import {
+  fetchMangaList,
+  fetchMangaById,
+  fetchRandomManga,
+  fetchMangaFeed,
+  fetchChapterPages,
+  getCoverUrl,
+  extractCoverFileName,
+  resolveTitle,
+  resolveTags,
+  resolveDescription,
+  resolveGroups,
+} from '@/lib/mangadex';
+
+export type ChapterSummary = {
+  id: string;
+  number: string;
+  title: string;
+  language: string;
+  pages?: number;
+  readableAt?: string;
+  groups?: string[];
+};
+
+function mapMangaToCatalogItem(m: any): CatalogItem {
+  const coverFile = extractCoverFileName(m.relationships);
   return {
-    id: String(id),
-    title: `Sample Gallery #${id}`,
-    cover: `https://picsum.photos/seed/${id}/300/400`,
-    tags: ['tag' + (id % 5), 'artist' + (id % 7)]
+    id: m.id,
+    title: resolveTitle(m),
+    cover: getCoverUrl(m.id, coverFile, 512) || '/icon-192.png',
+    tags: resolveTags(m),
+    description: resolveDescription(m),
   };
 }
 
-const MOCK_SIZE = 120;
-const MOCK_DB: CatalogItem[] = Array.from({length: MOCK_SIZE}).map((_, i) =>
-  generateMockItem(i + 1)
-);
-
 export async function getCatalogPage({
   page,
-  pageSize = 24
+  pageSize = 24,
 }: {
   page: number;
   pageSize?: number;
 }) {
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize;
-  const recent = MOCK_DB.slice(start, end);
-  // Popular is a shuffled slice
-  const popular = [...MOCK_DB]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, pageSize);
-  return {recent, popular, total: MOCK_DB.length};
+  const offset = (page - 1) * pageSize;
+
+  // recent = latest uploaded chapter desc
+  const recentRes = await fetchMangaList({
+    limit: pageSize,
+    offset,
+    order: { latestUploadedChapter: 'desc' },
+  });
+
+  // popular = followedCount desc (approximation to trending)
+  const popularRes = await fetchMangaList({
+    limit: pageSize,
+    offset, // IMPORTANT: support pagination
+    order: { followedCount: 'desc' },
+  });
+
+  const recent = recentRes.data.map(mapMangaToCatalogItem);
+  const popular = popularRes.data.map(mapMangaToCatalogItem);
+
+  return { recent, popular, total: recentRes.total, popularTotal: popularRes.total };
 }
 
 export async function getRandomItem(): Promise<CatalogItem> {
-  return MOCK_DB[Math.floor(Math.random() * MOCK_DB.length)];
+  const m = await fetchRandomManga(['cover_art']);
+  return mapMangaToCatalogItem(m);
 }
 
 export async function getItemById(id: string): Promise<CatalogItem | null> {
-  return MOCK_DB.find((x) => x.id === id) ?? null;
+  try {
+    const m = await fetchMangaById(id, ['cover_art']);
+    return mapMangaToCatalogItem(m);
+  } catch {
+    return null;
+  }
 }
 
 export async function searchCatalog(query: string): Promise<CatalogItem[]> {
-  const q = query.toLowerCase();
-  return MOCK_DB.filter(
-    (x) => x.title.toLowerCase().includes(q) || x.tags.some((t) => t.includes(q))
-  ).slice(0, 48);
+  const res = await fetchMangaList({ limit: 48, title: query });
+  return res.data.map(mapMangaToCatalogItem);
 }
 
-export function searchItems({query = '', tags = '', artists = '', page = 1}: {
+export async function searchItems({
+  query = '',
+  tags = '',
+  artists = '', // Not used with MangaDex simple search; kept for API compatibility
+  page = 1,
+}: {
   query?: string;
   tags?: string;
   artists?: string;
   page?: number;
 }) {
-  let filtered = [...MOCK_DB];
-  
-  // Filter by search query
-  if (query) {
-    const searchTerm = query.toLowerCase();
-    filtered = filtered.filter(item => 
-      item.title.toLowerCase().includes(searchTerm) ||
-      item.tags.some(tag => tag.toLowerCase().includes(searchTerm))
-    );
+  const pageSize = 24;
+  const offset = (page - 1) * pageSize;
+
+  // MangaDex expects tag UUIDs. Avoid sending non-UUIDs to prevent 400.
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const includedTags = tags
+    ? tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => uuidRegex.test(t))
+    : [];
+
+  const res = await fetchMangaList({
+    limit: pageSize,
+    offset,
+    title: query || undefined,
+    includedTags: includedTags.length ? includedTags : undefined,
+    order: query ? undefined : { latestUploadedChapter: 'desc' },
+  });
+  return res.data.map(mapMangaToCatalogItem);
+}
+
+export async function getMangaChapters(mangaId: string, limit = 100) : Promise<ChapterSummary[]> {
+  try {
+    console.log(`Fetching chapters for manga ${mangaId} with limit ${limit}`);
+    
+    const feed = await fetchMangaFeed(mangaId, { 
+      limit, 
+      order: { chapter: 'desc' }, 
+      includeExternalUrl: 0, 
+      includeEmptyPages: 0, 
+      includeFuturePublishAt: 0 
+    });
+    
+    console.log(`Feed response for manga ${mangaId}:`, {
+      total: feed.total,
+      chaptersCount: feed.data.length,
+      result: feed.result
+    });
+    
+    if (!feed.data || feed.data.length === 0) {
+      console.log(`No chapters found for manga ${mangaId}`);
+      return [];
+    }
+    
+    const chapters = feed.data.map((c) => ({
+      id: c.id,
+      number: c.attributes.chapter || '-',
+      title: c.attributes.title || '',
+      language: c.attributes.translatedLanguage,
+      pages: c.attributes.pages,
+      readableAt: c.attributes.readableAt,
+      groups: resolveGroups(c.relationships),
+    }));
+    
+    console.log(`Processed ${chapters.length} chapters for manga ${mangaId}`);
+    return chapters;
+  } catch (error) {
+    console.error(`Error fetching chapters for manga ${mangaId}:`, error);
+    
+    // Return empty array instead of throwing
+    return [];
   }
-  
-  // Filter by tags
-  if (tags) {
-    const tagList = tags.toLowerCase().split(',').map(t => t.trim());
-    filtered = filtered.filter(item =>
-      tagList.some(tag => item.tags.some(itemTag => itemTag.toLowerCase().includes(tag)))
-    );
+}
+
+export async function getFirstReadableChapterId(mangaId: string): Promise<string | null> {
+  const chapters = await getMangaChapters(mangaId, 50);
+  for (const ch of chapters) {
+    try {
+      const pages = await getChapterPageUrls(ch.id, true);
+      if (pages && pages.length) return ch.id;
+    } catch {}
   }
-  
-  // Filter by artists (simulated)
-  if (artists) {
-    const artistList = artists.toLowerCase().split(',').map(a => a.trim());
-    filtered = filtered.filter(item =>
-      artistList.some(artist => item.title.toLowerCase().includes(artist))
-    );
-  }
-  
-  // Pagination
-  const itemsPerPage = 24;
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  
-  return filtered.slice(startIndex, endIndex);
+  return null;
+}
+
+export async function getChapterPageUrls(chapterId: string, useDataSaver = true): Promise<string[]> {
+  return fetchChapterPages(chapterId, useDataSaver);
 }
 
 

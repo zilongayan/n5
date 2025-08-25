@@ -27,11 +27,14 @@ export function ShareButton({itemId, title, className = ''}: ShareButtonProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const galleryUrl = `${window.location.origin}/${locale}/gallery/${itemId}`;
+  const getGalleryUrl = (): string => {
+    if (typeof window === 'undefined') return `/${locale}/gallery/${itemId}`;
+    return `${window.location.origin}/${locale}/gallery/${itemId}`;
+  };
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(galleryUrl);
+      await navigator.clipboard.writeText(getGalleryUrl());
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
@@ -44,7 +47,7 @@ export function ShareButton({itemId, title, className = ''}: ShareButtonProps) {
 
   const shareVia = (platform: string) => {
     const encodedTitle = encodeURIComponent(title);
-    const encodedUrl = encodeURIComponent(galleryUrl);
+    const encodedUrl = encodeURIComponent(getGalleryUrl());
     
     let shareUrl = '';
     
@@ -66,7 +69,7 @@ export function ShareButton({itemId, title, className = ''}: ShareButtonProps) {
         break;
     }
     
-    if (shareUrl) {
+    if (shareUrl && typeof window !== 'undefined') {
       window.open(shareUrl, '_blank', 'width=600,height=400');
       setIsOpen(false);
     }
