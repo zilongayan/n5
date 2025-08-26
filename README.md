@@ -1,339 +1,181 @@
-# MangaView Portal
+# 🎌 MangaView - Plateforme de Lecture de Manga
 
-Un portail manga moderne inspiré de MangaDex, construit avec Next.js 15, TypeScript, Tailwind CSS et une architecture de cache intelligente.
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/zilongayan/n5)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🚀 Fonctionnalités
+## 🌟 **Vue d'ensemble**
 
-### ✨ Interface Utilisateur
-- **Design sombre moderne** avec palette de couleurs personnalisée
-- **Navigation responsive** avec support mobile/desktop
-- **Système de thème** configurable
-- **Support multilingue** (EN/FR/ES/IT/PT/RU) avec détection automatique
-- **Composants UI** optimisés avec shadcn/ui
+**MangaView** est une plateforme moderne de lecture de manga construite avec **Next.js 15**, **NextAuth.js**, et **Prisma**. Elle offre une expérience utilisateur fluide avec authentification Google OAuth, gestion des favoris, collections personnalisées, et une interface responsive.
 
-### 📚 Gestion des Manga
-- **Intégration MangaDex API v5** complète
-- **Recherche avancée** par titre, tags, langue, statut
-- **Filtrage par tags** avec mapping UUID intelligent
-- **Navigation par chapitres** avec métadonnées complètes
-- **Prévisualisation des pages** cliquable
+## ✨ **Fonctionnalités Principales**
 
-### 🔍 Lecteur de Manga
-- **Modes de lecture** multiples (Long strip, Single page, Fit width/height)
-- **Navigation clavier** (flèches, espace, Home/End)
-- **Contrôles de zoom** (50% à 300%)
-- **Préchargement intelligent** des pages
-- **Gestion d'erreurs** avec retry automatique
-- **Barre d'outils** extensible
+- 🔐 **Authentification Google OAuth** - Connexion sécurisée avec Google
+- 📚 **Catalogue de Manga** - Navigation par type, popularité, récent
+- ❤️ **Système de Favoris** - Sauvegarde de vos mangas préférés
+- 📁 **Collections Personnalisées** - Organisez vos mangas par thème
+- 🌍 **Support Multilingue** - Français, Anglais, Espagnol, Italien, Portugais, Russe
+- 📱 **Design Responsive** - Optimisé pour tous les appareils
+- ⚡ **Performance Optimisée** - Build Next.js optimisé avec Vercel
 
-### 💾 Système de Cache Intelligent
-- **Cache multi-niveaux** : localStorage, sessionStorage, mémoire
-- **Cache d'images** avec TTL configurable
-- **Cache de composants** avec React.memo
-- **Cache de données** avec React Query
-- **Gestionnaire de cache** avec interface UI
-- **Headers HTTP** optimisés (Cache-Control, ETag)
+## 🚀 **Déploiement Rapide**
 
-### 🧪 Tests et Qualité
-- **Tests unitaires** avec Vitest + React Testing Library
-- **Tests e2e** avec Playwright
-- **CI/CD** avec GitHub Actions
-- **Linting** et vérification de types
-- **Couverture de code** avec rapports
+### **Option 1: Déploiement Automatique (Recommandé)**
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/zilongayan/n5)
 
-### 📱 PWA et Performance
-- **Service Worker** pour le cache offline
-- **Manifest** pour l'installation
-- **LCP < 2.5s** avec Next.js Image Optimization
-- **Lighthouse ≥ 90** avec optimisations CSS/JS
-- **Streaming SSR** et ISR
-
-## 🛠️ Architecture Technique
-
-### Stack Principal
-- **Next.js 15** avec App Router
-- **TypeScript** strict
-- **Tailwind CSS 4** avec design system
-- **React Query** pour la gestion d'état
-- **Prisma** pour la base de données
-
-### Composants Clés
-```typescript
-// Client MangaDex typé
-lib/mangadex.ts          // API client avec retry/backoff
-lib/tagMapping.ts        // Mapping tags nom → UUID
-lib/cacheConfig.ts       // Configuration cache globale
-
-// Composants UI
-components/CachedImage.tsx    // Image avec cache local
-components/TagFilter.tsx      // Filtrage par tags
-components/ReaderToolbar.tsx  // Contrôles lecteur
-components/ModeToggle.tsx     // Modes de lecture
-components/ImageList.tsx      // Liste d'images avec préchargement
-
-// Hooks personnalisés
-hooks/useCache.ts            // Gestion cache client
-hooks/useTranslations.ts     // Internationalisation
-```
-
-### Système de Cache
-```typescript
-// Configuration cache
-const CACHE_CONFIG = {
-  images: { ttl: 24 * 60 * 60 * 1000, maxSize: 100 },
-  data: { ttl: 5 * 60 * 1000, maxSize: 50 },
-  components: { ttl: 10 * 60 * 1000, maxSize: 30 }
-};
-
-// Utilisation
-const { data, isLoading } = useCache('manga-list', fetchMangaList, {
-  ttl: CACHE_CONFIG.data.ttl,
-  maxSize: CACHE_CONFIG.data.maxSize
-});
-```
-
-## 🚀 Installation et Démarrage
-
-### Prérequis
-- Node.js 18+ 
-- npm ou yarn
-- Base de données (MySQL/PostgreSQL pour Prisma)
-
-### Installation
+### **Option 2: Déploiement Local**
 ```bash
-# Cloner le projet
-git clone <repository>
-cd portal
+# Clone du repository
+git clone https://github.com/zilongayan/n5.git
+cd n5/portal
 
-# Installer les dépendances
+# Installation des dépendances
 npm install
 
-# Configuration environnement
-cp .env.example .env.local
-# Éditer .env.local avec vos variables
+# Configuration de la base de données
+npx prisma generate
+npx prisma db push
 
-# Générer Prisma client
-npm run db:generate
-
-# Démarrer en développement
+# Lancement en développement
 npm run dev
 ```
 
-### Scripts Disponibles
-```bash
-npm run dev              # Démarrage développement
-npm run build            # Build production
-npm run start            # Démarrage production
-npm run lint             # Linting ESLint
-npm run type-check       # Vérification TypeScript
-npm run test             # Tests unitaires (watch)
-npm run test:unit        # Tests unitaires (once)
-npm run test:e2e         # Tests end-to-end
-npm run test:e2e:ui      # Tests e2e avec interface
+## 🛠️ **Technologies Utilisées**
+
+- **Frontend:** Next.js 15, React 19, TypeScript
+- **Authentification:** NextAuth.js v4, Google OAuth
+- **Base de données:** Prisma ORM, SQLite
+- **Styling:** CSS Modules, Responsive Design
+- **Déploiement:** Vercel, GitHub Actions
+- **Internationalisation:** next-intl
+
+## 📁 **Structure du Projet**
+
+```
+portal/
+├── src/
+│   ├── app/                 # App Router Next.js 15
+│   ├── components/          # Composants React réutilisables
+│   ├── hooks/              # Hooks personnalisés
+│   ├── lib/                # Utilitaires et configurations
+│   └── i18n/               # Fichiers de traduction
+├── prisma/                 # Schéma et migrations de base de données
+├── .github/                # Workflows GitHub Actions
+├── scripts/                # Scripts de déploiement
+└── docs/                   # Documentation complète
 ```
 
-## 🔧 Configuration
+## 🔧 **Configuration Requise**
 
-### Variables d'Environnement
+### **Variables d'Environnement**
 ```bash
 # Base de données
-DATABASE_URL="mysql://user:pass@localhost:3306/mangaview"
+DATABASE_URL="file:./dev.db"
 
-# MangaDex API
-MANGADEX_API_URL="https://api.mangadex.org"
-MANGADEX_UPLOADS_URL="https://uploads.mangadex.org"
+# NextAuth.js
+NEXTAUTH_SECRET="votre-secret-ici"
+NEXTAUTH_URL="http://localhost:3000"
 
-# Cache
-CACHE_TTL_IMAGES=86400000      # 24h
-CACHE_TTL_DATA=300000          # 5min
-CACHE_MAX_SIZE=100             # Éléments max
+# Google OAuth
+GOOGLE_CLIENT_ID="votre-client-id"
+GOOGLE_CLIENT_SECRET="votre-client-secret"
 ```
 
-### Configuration Next.js
-```typescript
-// next.config.ts
-const nextConfig = {
-  images: {
-    remotePatterns: [
-      { hostname: 'uploads.mangadex.org' },
-      { hostname: '*.mangadex.network' }
-    ]
-  },
-  experimental: {
-    optimizeCss: true,
-    optimizePackageImports: ['@tanstack/react-query']
-  }
-};
-```
+### **Configuration Google OAuth**
+1. Allez sur [Google Cloud Console](https://console.cloud.google.com)
+2. Créez un projet "MangaView OAuth"
+3. Activez l'API Google+ API
+4. Créez des identifiants OAuth 2.0
+5. Ajoutez les URIs de redirection
 
-## 📊 Tests et Qualité
+## 📱 **Fonctionnalités Utilisateur**
 
-### Tests Unitaires
+### **Navigation**
+- **Accueil** - Découvrez les mangas populaires
+- **Catalogue** - Parcourez par type, popularité, récent
+- **Recherche** - Trouvez vos mangas préférés
+- **Favoris** - Accédez rapidement à vos mangas sauvegardés
+- **Collections** - Organisez vos mangas par thème
+
+### **Lecture**
+- **Lecteur Optimisé** - Navigation fluide entre chapitres
+- **Mode Sombre/Clair** - Adaptation à vos préférences
+- **Zoom et Navigation** - Contrôles tactiles et clavier
+- **Historique** - Reprenez où vous vous êtes arrêté
+
+## 🚀 **Déploiement sur Vercel**
+
+### **Automatique (Recommandé)**
+1. Cliquez sur le bouton "Deploy to Vercel" ci-dessus
+2. Connectez-vous avec votre compte GitHub
+3. Configurez les variables d'environnement
+4. Déployez en un clic !
+
+### **Manuel via CLI**
 ```bash
-# Lancer tous les tests
-npm run test:unit
-
-# Avec couverture
-npm run test:unit:coverage
-
-# Tests spécifiques
-npm run test:unit -- --run src/lib/__tests__/mangadex.test.ts
-```
-
-### Tests End-to-End
-```bash
-# Lancer Playwright
-npm run test:e2e
-
-# Interface graphique
-npm run test:e2e:ui
-
-# Mode debug
-npm run test:e2e:debug
-```
-
-### CI/CD
-Le projet inclut un workflow GitHub Actions qui :
-- Lance les tests sur Node.js 18 et 20
-- Vérifie le linting et les types
-- Exécute les tests unitaires et e2e
-- Build le projet
-- Upload la couverture de code
-
-## 🎨 Design System
-
-### Palette de Couleurs
-```css
-/* Couleurs principales */
---bg-primary: #0B0C0F        /* Fond principal */
---surface-primary: #151821    /* Surfaces */
---text-primary: #E6E7EB      /* Texte principal */
---text-muted: #9AA3B2        /* Texte secondaire */
---accent-primary: #7C5CFF    /* Accent principal */
-
-/* États */
---success: #10B981
---warning: #F59E0B
---error: #EF4444
---info: #3B82F6
-```
-
-### Composants
-- **Boutons** : `theme-button-primary`, `theme-button-secondary`
-- **Cartes** : `theme-card` avec hover effects
-- **Tags** : `tag-primary` avec animations
-- **Formulaires** : Inputs stylisés avec validation
-
-## 🔍 API et Intégrations
-
-### MangaDex API v5
-```typescript
-// Endpoints supportés
-GET /manga                    // Liste des manga
-GET /manga/{id}              // Détails manga
-GET /cover/{id}              // Images de couverture
-GET /chapter                 // Liste des chapitres
-GET /at-home/server/{id}     // Serveur de lecture
-
-// Paramètres de recherche
-{
-  limit: 24,                 // Résultats par page
-  offset: 0,                 // Pagination
-  title: "search term",      // Recherche par titre
-  includedTags: ["uuid"],    // Filtrage par tags
-  order: { followedCount: "desc" }  // Tri
-}
-```
-
-### Proxy API Local
-```typescript
-// Route handler Edge
-app/api/mdx/[...path]/route.ts
-
-// Fonctionnalités
-- Cache-Control headers
-- Rate limiting
-- CORS configuration
-- Error handling
-- Retry logic
-```
-
-## 📱 PWA et Offline
-
-### Service Worker
-- Cache des pages visitées
-- Cache des images et assets
-- Stratégie "Cache First" pour les ressources statiques
-- Stratégie "Network First" pour l'API
-
-### Manifest
-```json
-{
-  "name": "MangaView Portal",
-  "short_name": "MangaView",
-  "theme_color": "#0B0C0F",
-  "background_color": "#0B0C0F",
-  "display": "standalone"
-}
-```
-
-## 🚀 Déploiement
-
-### Vercel (Recommandé)
-```bash
-# Installation Vercel CLI
+# Installation de Vercel CLI
 npm i -g vercel
 
-# Déploiement
+# Connexion et déploiement
+vercel login
 vercel --prod
 ```
 
-### Docker
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
+## 🔄 **Workflow GitHub Actions**
 
-## 🤝 Contribution
+Le projet inclut un workflow automatisé pour le déploiement :
+- **Tests automatiques** à chaque push
+- **Build et déploiement** automatiques sur Vercel
+- **Validation de qualité** du code
 
-### Guidelines
-1. Fork le projet
-2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Commit les changements (`git commit -m 'Add AmazingFeature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
+## 📊 **Statistiques du Projet**
 
-### Standards de Code
-- **TypeScript strict** avec types explicites
-- **ESLint** + **Prettier** pour la cohérence
-- **Tests unitaires** pour les nouvelles fonctionnalités
-- **Tests e2e** pour les flux utilisateur
-- **Documentation** des composants complexes
+- **⭐ Stars:** [Ajoutez votre étoile !](https://github.com/zilongayan/n5)
+- **🔄 Forks:** Contribuez au projet
+- **🐛 Issues:** Signalez les bugs
+- **💡 Pull Requests:** Proposez des améliorations
 
-## 📄 Licence
+## 🤝 **Contribution**
 
-Ce projet est sous licence MIT. Voir `LICENSE` pour plus de détails.
+Les contributions sont les bienvenues ! Voici comment contribuer :
 
-## 🙏 Remerciements
+1. **Fork** le projet
+2. **Créez** une branche pour votre fonctionnalité
+3. **Commitez** vos changements
+4. **Poussez** vers la branche
+5. **Ouvrez** une Pull Request
 
-- **MangaDex** pour l'API publique et l'inspiration
-- **Next.js** pour le framework React
-- **Tailwind CSS** pour le système de design
-- **Communauté open source** pour les composants et outils
+## 📄 **Licence**
 
-## 📞 Support
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
-Pour toute question ou problème :
-- Ouvrir une issue sur GitHub
-- Consulter la documentation
-- Contacter l'équipe de développement
+## 🙏 **Remerciements**
+
+- **Next.js** - Framework React moderne
+- **Vercel** - Plateforme de déploiement
+- **NextAuth.js** - Authentification sécurisée
+- **Prisma** - ORM moderne pour Node.js
+- **Communauté open source** - Pour tous les outils et bibliothèques
+
+## 📞 **Support**
+
+- **Documentation:** Consultez les fichiers `.md` dans le projet
+- **Issues:** [GitHub Issues](https://github.com/zilongayan/n5/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/zilongayan/n5/discussions)
 
 ---
 
-**MangaView Portal** - Découvrez et lisez vos manga préférés avec une expérience moderne et intuitive ! 🎌📚
+## 🎯 **Prochaines Étapes**
+
+1. **Déployez** sur Vercel avec le bouton ci-dessus
+2. **Configurez** Google OAuth dans Google Cloud Console
+3. **Ajoutez** vos variables d'environnement dans Vercel
+4. **Testez** l'authentification Google
+5. **Personnalisez** selon vos besoins
+
+**Votre plateforme MangaView sera en ligne en moins de 5 minutes ! 🚀**
+
+---
+
+<div align="center">
+  <strong>⭐ N'oubliez pas d'ajouter une étoile au projet ! ⭐</strong>
+</div>
