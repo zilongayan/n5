@@ -4,6 +4,7 @@ import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
 import {PWAMeta} from '@/components/PWAMeta';
 import { QueryProvider } from '@/components/QueryProvider';
+import { SessionProvider } from '@/components/SessionProvider';
 import Link from 'next/link';
 
 const geistSans = Geist({
@@ -123,7 +124,9 @@ export default async function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0B0C0F] text-[#E6E7EB]`}>
         <QueryProvider>
-          {children}
+          <SessionProvider>
+            {children}
+          </SessionProvider>
           <footer className="mt-16 border-t border-purple-500/20 py-12 text-center bg-gradient-to-r from-slate-900/50 via-purple-900/20 to-slate-900/50 backdrop-blur-sm">
             <div className="max-w-7xl mx-auto px-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">

@@ -36,7 +36,7 @@ rm -rf .next out dist
 
 # Installation des dépendances
 echo -e "${BLUE}📦 Installation des dépendances...${NC}"
-npm install
+npm install --legacy-peer-deps
 
 # Build de production
 echo -e "${BLUE}🔨 Build de production...${NC}"
@@ -60,7 +60,7 @@ cp -r .next "$DEPLOY_DIR/"
 cp -r public "$DEPLOY_DIR/"
 cp package.json "$DEPLOY_DIR/"
 cp next.config.ts "$DEPLOY_DIR/"
-cp .htaccess "$DEPLOY_DIR/"
+cp public/.htaccess "$DEPLOY_DIR/"
 cp DEPLOYMENT.md "$DEPLOY_DIR/"
 
 # Création du fichier de configuration serveur

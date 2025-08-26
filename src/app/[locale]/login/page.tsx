@@ -6,20 +6,21 @@ import {AgeGate} from '@/components/AgeGate';
 import {useState, useEffect} from 'react';
 import {useTranslations} from '@/hooks/useTranslations';
 import {useAuth} from '@/hooks/useAuth';
+import {GoogleLoginButton} from '@/components/GoogleLoginButton';
 
 export default function LoginPage() {
   const router = useRouter();
   const {t, locale} = useTranslations();
-  const {login, isAuthenticated} = useAuth();
+  const {login, isAuthenticated, isLoading} = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isLoading) {
       router.push(`/${locale}/profile`);
     }
-  }, [isAuthenticated, router, locale]);
+  }, [isAuthenticated, isLoading, router, locale]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -35,13 +36,17 @@ export default function LoginPage() {
       return;
     }
 
-    const result = await login(email, password);
-    setLoading(false);
-    
-    if (result.success) {
-      router.push(`/${locale}/profile`);
-    } else {
-      setError(result.error || t('auth.loginError'));
+    try {
+      const result = await login(email, password);
+      if (result?.ok) {
+        router.push(`/${locale}/profile`);
+      } else {
+        setError(t('auth.loginError'));
+      }
+    } catch (error) {
+      setError(t('auth.loginError'));
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -108,6 +113,21 @@ export default function LoginPage() {
                 t('auth.loginButton')
               )}
             </button>
+
+            {/* Séparateur */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white dark:bg-slate-900 text-gray-500 dark:text-gray-400">
+                  {t('auth.or') || 'ou'}
+                </span>
+              </div>
+            </div>
+
+            {/* Bouton Google */}
+            <GoogleLoginButton />
             
             <div className="text-center pt-4">
               <a href={`/${locale}/signup`} className="text-primary hover:text-primary-dark transition-colors text-sm">

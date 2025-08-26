@@ -4,7 +4,7 @@ import {locales, defaultLocale} from './i18n/request';
 export default createMiddleware({
   locales: Array.from(locales),
   defaultLocale,
-  localePrefix: 'as-needed',
+  localePrefix: 'always',
   // Détection automatique de la langue basée sur Accept-Language du navigateur
   localeDetection: true
 });
@@ -16,8 +16,7 @@ export const config = {
     // - _next (static files)
     // - _vercel (Vercel internals)
     // - static files
-    // - root path (handled by rewrite)
-    '/((?!api|_next|_vercel|.*\\..*|^$).*)'
+    '/((?!api|_next|_vercel|.*\\..*).*)'
   ]
 };
 
